@@ -9,8 +9,14 @@ import android.util.Log;
  * Allows Friday to be set as the default assistant on the device.
  * When enabled, a long-press of the home button activates Friday.
  *
- * This is a REAL VoiceInteractionService — Android's official API
- * for digital assistants.
+ * CRITICAL: For an app to appear in Android's assistant selection
+ * list, it MUST provide:
+ *   1. VoiceInteractionService (this class)
+ *   2. VoiceInteractionSessionService (FridaySessionService)
+ *   3. Both declared in AndroidManifest with BIND_VOICE_INTERACTION permission
+ *
+ * Without #2, Android silently ignores the app and it never appears
+ * in the default assistant picker.
  */
 public class FridayVoiceInteractionService extends VoiceInteractionService {
 
@@ -19,7 +25,7 @@ public class FridayVoiceInteractionService extends VoiceInteractionService {
     @Override
     public void onReady() {
         super.onReady();
-        Log.d(TAG, "Voice Interaction Service is ready");
+        Log.d(TAG, "Voice Interaction Service is ready — Friday can now be set as default assistant");
     }
 
     @Override

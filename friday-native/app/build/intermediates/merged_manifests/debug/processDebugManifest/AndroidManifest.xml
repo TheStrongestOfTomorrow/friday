@@ -72,7 +72,7 @@
             android:label="@string/title_settings"
             android:screenOrientation="portrait" />
 
-        <!-- Voice Interaction Service -->
+        <!-- Voice Interaction Service — allows Friday to be set as default assistant -->
         <service
             android:name="com.friday.assistant.service.FridayVoiceInteractionService"
             android:exported="true"
@@ -85,6 +85,12 @@
                 android:name="android.voice_interaction"
                 android:resource="@xml/voice_interaction" />
         </service>
+
+        <!-- Voice Interaction Session Service — REQUIRED for assistant picker to show Friday -->
+        <service
+            android:name="com.friday.assistant.service.FridaySessionService"
+            android:exported="true"
+            android:permission="android.permission.BIND_VOICE_INTERACTION" />
 
         <!-- Foreground Service -->
         <service

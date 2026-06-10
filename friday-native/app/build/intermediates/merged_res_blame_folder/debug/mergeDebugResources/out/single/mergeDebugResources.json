@@ -4,12 +4,12 @@
         "source": "/home/z/.gradle/daemon/8.14.3/com.friday.assistant.app-main-42:/drawable/bg_card.xml"
     },
     {
-        "merged": "/home/z/.gradle/daemon/8.14.3/com.friday.assistant.app-debug-40:/drawable_bg_peek_overlay.xml.flat",
-        "source": "/home/z/.gradle/daemon/8.14.3/com.friday.assistant.app-main-42:/drawable/bg_peek_overlay.xml"
+        "merged": "com.friday.assistant.app-debug-40:/xml_voice_interaction.xml.flat",
+        "source": "com.friday.assistant.app-main-42:/xml/voice_interaction.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_divider.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_divider.xml"
+        "merged": "/home/z/.gradle/daemon/8.14.3/com.friday.assistant.app-debug-40:/drawable_bg_peek_overlay.xml.flat",
+        "source": "/home/z/.gradle/daemon/8.14.3/com.friday.assistant.app-main-42:/drawable/bg_peek_overlay.xml"
     },
     {
         "merged": "/home/z/.gradle/daemon/8.14.3/com.friday.assistant.app-debug-40:/color_toggle_thumb_selector.xml.flat",
