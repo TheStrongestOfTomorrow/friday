@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>Friday — Settings</title>
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <link rel="stylesheet" href="/src/css/settings.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="app-header">
+      <div class="header-left">
+        <a href="/index.html" class="back-btn" aria-label="Back">&larr;</a>
+        <h1 class="app-title">Settings</h1>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <!-- Wake Word Section -->
+      <section class="settings-section">
+        <h2 class="section-title">Voice Activation</h2>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-label">Wake Word</span>
+            <span class="setting-desc">The word that activates Friday</span>
+          </div>
+          <div class="setting-control">
+            <input type="text" id="wake-word" class="setting-input" value="Hey Friday" placeholder="Hey Friday" />
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-label">Sensitivity</span>
+            <span class="setting-desc">Wake word detection sensitivity</span>
+          </div>
+          <div class="setting-control">
+            <input type="range" id="sensitivity" class="setting-range" min="1" max="10" value="7" />
+            <span id="sensitivity-value" class="range-value">7</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stealth Mode Section -->
+      <section class="settings-section">
+        <h2 class="section-title">Stealth &amp; Audio</h2>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-label">Stealth Mode</span>
+            <span class="setting-desc">Hide the Peek overlay during activation</span>
+          </div>
+          <div class="setting-control">
+            <label class="toggle">
+              <input type="checkbox" id="stealth-mode" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-label">Audio Ducking</span>
+            <span class="setting-desc">Pause/duck background media on activation</span>
+          </div>
+          <div class="setting-control">
+            <label class="toggle">
+              <input type="checkbox" id="audio-ducking" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-label">Vibration Feedback</span>
+            <span class="setting-desc">Vibrate on wake word detection</span>
+          </div>
+          <div class="setting-control">
+            <label class="toggle">
+              <input type="checkbox" id="vibration" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Macro Management Section -->
+      <section class="settings-section">
+        <h2 class="section-title">Macro Management</h2>
+        <div class="macro-list-settings">
+          <div id="settings-macro-container" class="macro-container">
+            <div class="macro-empty">
+              <p>No macros configured yet.</p>
+              <p class="macro-hint">Tap the button below to create your first macro.</p>
+            </div>
+          </div>
+          <button class="btn-primary" id="btn-add-macro">
+            <span class="btn-icon">+</span> Add Macro
+          </button>
+        </div>
+      </section>
+
+      <!-- System Section -->
+      <section class="settings-section">
+        <h2 class="section-title">System</h2>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-label">Default Assistant</span>
+            <span class="setting-desc">Set Friday as the default assistant app</span>
+          </div>
+          <div class="setting-control">
+            <button class="btn-secondary" id="btn-set-assistant">Configure</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-label">Accessibility Service</span>
+            <span class="setting-desc">Required for screen tap simulation</span>
+          </div>
+          <div class="setting-control">
+            <button class="btn-secondary" id="btn-set-accessibility">Enable</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-label">Shizuku Connection</span>
+            <span class="setting-desc">Required for ADB/root shell commands</span>
+          </div>
+          <div class="setting-control">
+            <span id="shizuku-status" class="status-badge disconnected">Disconnected</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section class="settings-section">
+        <h2 class="section-title">About</h2>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-label">Version</span>
+          </div>
+          <div class="setting-control">
+            <span class="setting-value">0.1.0 (Phase 1)</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <span>Friday v0.1.0 &middot; Phase 1</span>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/js/settings.js"></script>
+</body>
+</html>

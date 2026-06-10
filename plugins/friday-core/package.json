@@ -1,0 +1,15 @@
+{
+  "name": "@friday/core",
+  "version": "0.1.0",
+  "description": "Friday Core Capacitor Plugin",
+  "main": "dist/plugin.js",
+  "types": "dist/plugin.d.ts",
+  "capacitor": {
+    "android": {
+      "src": "android"
+    }
+  },
+  "keywords": ["capacitor", "plugin", "friday"],
+  "author": "Friday Dev",
+  "license": "MIT"
+}

@@ -1,0 +1,29 @@
+{
+  "name": "friday",
+  "version": "0.1.0",
+  "description": "Friday - System-level voice-controlled macro and automation assistant",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "cap:sync": "npx cap sync",
+    "cap:open": "npx cap open android",
+    "cap:run": "npx cap run android",
+    "android:build": "npm run build && npx cap sync && cd android && ./gradlew assembleDebug",
+    "android:debug": "npm run build && npx cap sync && cd android && ./gradlew assembleDebug && adb install -r app/build/outputs/apk/debug/app-debug.apk"
+  },
+  "keywords": ["friday", "automation", "voice-assistant", "android"],
+  "author": "Friday Dev",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
+    "@friday/core": "file:./plugins/friday-core"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.4.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16"
+  }
+}

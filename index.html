@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>Friday</title>
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <link rel="stylesheet" href="/src/css/peek.css" />
+</head>
+<body>
+  <!-- Peek Overlay (always present, toggled by JS) -->
+  <div id="peek-overlay" class="peek-overlay" aria-label="Friday voice overlay">
+    <div class="peek-inner">
+      <div class="peek-waveform">
+        <canvas id="waveform-canvas" width="120" height="32"></canvas>
+      </div>
+      <div class="peek-status">
+        <span id="peek-text" class="peek-text">Waiting...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App Shell -->
+  <div id="app" class="app-shell">
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-mark">F</div>
+        <h1 class="app-title">Friday</h1>
+      </div>
+      <nav class="header-nav">
+        <a href="/index.html" class="nav-link active" data-page="home">Home</a>
+        <a href="/src/pages/settings.html" class="nav-link" data-page="settings">Settings</a>
+      </nav>
+    </header>
+
+    <main class="app-main">
+      <!-- Home / Dashboard -->
+      <section id="page-home" class="page active">
+        <div class="status-card">
+          <div class="status-indicator">
+            <div id="status-dot" class="status-dot idle"></div>
+            <span id="status-label" class="status-label">Idle</span>
+          </div>
+          <p class="status-desc">Friday is standing by. Say the wake word to activate.</p>
+        </div>
+
+        <div class="quick-actions">
+          <h2 class="section-title">Quick Actions</h2>
+          <div class="action-grid">
+            <button class="action-btn" id="btn-test-duck">
+              <div class="action-icon">🔇</div>
+              <span>Duck Audio</span>
+            </button>
+            <button class="action-btn" id="btn-test-resume">
+              <div class="action-icon">🔊</div>
+              <span>Resume Audio</span>
+            </button>
+            <button class="action-btn" id="btn-toggle-peek">
+              <div class="action-icon">👁</div>
+              <span>Toggle Peek</span>
+            </button>
+            <button class="action-btn" id="btn-settings">
+              <div class="action-icon">⚙</div>
+              <span>Settings</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="macro-list">
+          <h2 class="section-title">Active Macros</h2>
+          <div id="macro-container" class="macro-container">
+            <div class="macro-empty">
+              <p>No macros configured yet.</p>
+              <p class="macro-hint">Go to Settings to create your first macro.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <span>Friday v0.1.0 &middot; Phase 1</span>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/js/app.js"></script>
+</body>
+</html>

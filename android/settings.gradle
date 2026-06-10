@@ -1,0 +1,7 @@
+include ':app'
+include ':capacitor-cordova-android-plugins'
+project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')
+include ':friday-core'
+project(':friday-core').projectDir = new File('./friday-core/')
+
+apply from: 'capacitor.settings.gradle'
