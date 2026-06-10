@@ -1,0 +1,285 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.friday.assistant"
+4    android:versionCode="3"
+5    android:versionName="3.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="36" />
+10
+11    <!-- Permissions -->
+12    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+12-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:6:5-71
+12-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:6:22-68
+13    <uses-permission android:name="android.permission.INTERNET" />
+13-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:7:5-67
+13-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:7:22-64
+14    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+14-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:8:5-77
+14-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:8:22-74
+15    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+15-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:9:5-88
+15-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:9:22-85
+16    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+16-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:10:5-92
+16-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:10:22-89
+17    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+17-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:11:5-77
+17-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:11:22-74
+18    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+18-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:12:5-78
+18-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:12:22-75
+19    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+19-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:13:5-81
+19-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:13:22-78
+20    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+20-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:14:5-95
+20-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:14:22-92
+21    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+21-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:15:5-85
+21-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:15:22-82
+22    <uses-permission android:name="android.permission.READ_CONTACTS" />
+22-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:16:5-72
+22-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:16:22-69
+23    <uses-permission
+23-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:17:5-18:38
+24        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+24-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:17:22-78
+25        android:maxSdkVersion="28" />
+25-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:18:9-35
+26    <uses-permission android:name="android.permission.VIBRATE" />
+26-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:19:5-66
+26-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:19:22-63
+27    <uses-permission android:name="android.permission.WAKE_LOCK" />
+27-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:20:5-68
+27-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:20:22-65
+28
+29    <uses-feature
+29-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:22:5-88
+30        android:name="android.hardware.microphone"
+30-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:22:19-61
+31        android:required="true" />
+31-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:22:62-85
+32
+33    <permission
+33-->[androidx.core:core:1.13.0] /home/z/.gradle/caches/8.14.3/transforms/e05c08cb719129d2c01c616774febb39/transformed/core-1.13.0/AndroidManifest.xml:22:5-24:47
+34        android:name="com.friday.assistant.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+34-->[androidx.core:core:1.13.0] /home/z/.gradle/caches/8.14.3/transforms/e05c08cb719129d2c01c616774febb39/transformed/core-1.13.0/AndroidManifest.xml:23:9-81
+35        android:protectionLevel="signature" />
+35-->[androidx.core:core:1.13.0] /home/z/.gradle/caches/8.14.3/transforms/e05c08cb719129d2c01c616774febb39/transformed/core-1.13.0/AndroidManifest.xml:24:9-44
+36
+37    <uses-permission android:name="com.friday.assistant.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+37-->[androidx.core:core:1.13.0] /home/z/.gradle/caches/8.14.3/transforms/e05c08cb719129d2c01c616774febb39/transformed/core-1.13.0/AndroidManifest.xml:26:5-97
+37-->[androidx.core:core:1.13.0] /home/z/.gradle/caches/8.14.3/transforms/e05c08cb719129d2c01c616774febb39/transformed/core-1.13.0/AndroidManifest.xml:26:22-94
+38
+39    <application
+39-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:24:5-94:19
+40        android:allowBackup="true"
+40-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:25:9-35
+41        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+41-->[androidx.core:core:1.13.0] /home/z/.gradle/caches/8.14.3/transforms/e05c08cb719129d2c01c616774febb39/transformed/core-1.13.0/AndroidManifest.xml:28:18-86
+42        android:debuggable="true"
+43        android:extractNativeLibs="false"
+44        android:icon="@mipmap/ic_launcher"
+44-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:26:9-43
+45        android:label="@string/app_name"
+45-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:27:9-41
+46        android:supportsRtl="true"
+46-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:28:9-35
+47        android:theme="@style/Theme.Friday" >
+47-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:29:9-44
+48
+49        <!-- Main Activity -->
+50        <activity
+50-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:33:9-42:20
+51            android:name="com.friday.assistant.MainActivity"
+51-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:34:13-41
+52            android:exported="true"
+52-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:35:13-36
+53            android:launchMode="singleTop"
+53-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:37:13-43
+54            android:screenOrientation="portrait" >
+54-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:36:13-49
+55            <intent-filter>
+55-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:38:13-41:29
+56                <action android:name="android.intent.action.MAIN" />
+56-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:39:17-69
+56-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:39:25-66
+57
+58                <category android:name="android.intent.category.LAUNCHER" />
+58-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:40:17-77
+58-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:40:27-74
+59            </intent-filter>
+60        </activity>
+61
+62        <!-- Onboarding Activity -->
+63        <activity
+63-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:45:9-48:52
+64            android:name="com.friday.assistant.OnboardingActivity"
+64-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:46:13-47
+65            android:exported="false"
+65-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:47:13-37
+66            android:screenOrientation="portrait" />
+66-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:48:13-49
+67
+68        <!-- Settings Activity -->
+69        <activity
+69-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:51:9-55:54
+70            android:name="com.friday.assistant.SettingsActivity"
+70-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:52:13-45
+71            android:exported="false"
+71-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:53:13-37
+72            android:label="@string/title_settings"
+72-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:55:13-51
+73            android:screenOrientation="portrait" />
+73-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:54:13-49
+74
+75        <!-- Voice Interaction Service -->
+76        <service
+76-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:58:9-68:19
+77            android:name="com.friday.assistant.service.FridayVoiceInteractionService"
+77-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:59:13-66
+78            android:exported="true"
+78-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:60:13-36
+79            android:permission="android.permission.BIND_VOICE_INTERACTION" >
+79-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:61:13-75
+80            <intent-filter>
+80-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:62:13-64:29
+81                <action android:name="android.service.voice.VoiceInteractionService" />
+81-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:63:17-88
+81-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:63:25-85
+82            </intent-filter>
+83
+84            <meta-data
+84-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:65:13-67:61
+85                android:name="android.voice_interaction"
+85-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:66:17-57
+86                android:resource="@xml/voice_interaction" />
+86-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:67:17-58
+87        </service>
+88
+89        <!-- Foreground Service -->
+90        <service
+90-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:71:9-75:44
+91            android:name="com.friday.assistant.service.FridayForegroundService"
+91-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:72:13-60
+92            android:exported="false"
+92-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:73:13-37
+93            android:foregroundServiceType="microphone|mediaPlayback"
+93-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:74:13-69
+94            android:stopWithTask="false" />
+94-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:75:13-41
+95
+96        <!-- Peek Overlay Service -->
+97        <service
+97-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:78:9-80:40
+98            android:name="com.friday.assistant.service.PeekOverlayService"
+98-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:79:13-55
+99            android:exported="false" />
+99-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:80:13-37
+100
+101        <!-- Boot Receiver -->
+102        <receiver
+102-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:83:9-92:20
+103            android:name="com.friday.assistant.service.BootReceiver"
+103-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:84:13-49
+104            android:enabled="true"
+104-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:86:13-35
+105            android:exported="true" >
+105-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:85:13-36
+106            <intent-filter>
+106-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:87:13-91:29
+107                <action android:name="android.intent.action.BOOT_COMPLETED" />
+107-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:88:17-79
+107-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:88:25-76
+108                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+108-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:89:17-82
+108-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:89:25-79
+109                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+109-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:90:17-84
+109-->/home/z/my-project/friday-native/app/src/main/AndroidManifest.xml:90:25-81
+110            </intent-filter>
+111        </receiver>
+112
+113        <provider
+113-->[androidx.emoji2:emoji2:1.3.0] /home/z/.gradle/caches/8.14.3/transforms/9d1b43af1a3b9b621868f42d34a22ac5/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+114            android:name="androidx.startup.InitializationProvider"
+114-->[androidx.emoji2:emoji2:1.3.0] /home/z/.gradle/caches/8.14.3/transforms/9d1b43af1a3b9b621868f42d34a22ac5/transformed/emoji2-1.3.0/AndroidManifest.xml:25:13-67
+115            android:authorities="com.friday.assistant.androidx-startup"
+115-->[androidx.emoji2:emoji2:1.3.0] /home/z/.gradle/caches/8.14.3/transforms/9d1b43af1a3b9b621868f42d34a22ac5/transformed/emoji2-1.3.0/AndroidManifest.xml:26:13-68
+116            android:exported="false" >
+116-->[androidx.emoji2:emoji2:1.3.0] /home/z/.gradle/caches/8.14.3/transforms/9d1b43af1a3b9b621868f42d34a22ac5/transformed/emoji2-1.3.0/AndroidManifest.xml:27:13-37
+117            <meta-data
+117-->[androidx.emoji2:emoji2:1.3.0] /home/z/.gradle/caches/8.14.3/transforms/9d1b43af1a3b9b621868f42d34a22ac5/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+118                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+118-->[androidx.emoji2:emoji2:1.3.0] /home/z/.gradle/caches/8.14.3/transforms/9d1b43af1a3b9b621868f42d34a22ac5/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
+119                android:value="androidx.startup" />
+119-->[androidx.emoji2:emoji2:1.3.0] /home/z/.gradle/caches/8.14.3/transforms/9d1b43af1a3b9b621868f42d34a22ac5/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
+120            <meta-data
+120-->[androidx.lifecycle:lifecycle-process:2.6.2] /home/z/.gradle/caches/8.14.3/transforms/b9fccaea96a88401b0bb166ccae6467c/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:29:13-31:52
+121                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+121-->[androidx.lifecycle:lifecycle-process:2.6.2] /home/z/.gradle/caches/8.14.3/transforms/b9fccaea96a88401b0bb166ccae6467c/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:30:17-78
+122                android:value="androidx.startup" />
+122-->[androidx.lifecycle:lifecycle-process:2.6.2] /home/z/.gradle/caches/8.14.3/transforms/b9fccaea96a88401b0bb166ccae6467c/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:31:17-49
+123            <meta-data
+123-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:29:13-31:52
+124                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+124-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:30:17-85
+125                android:value="androidx.startup" />
+125-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:31:17-49
+126        </provider>
+127
+128        <uses-library
+128-->[androidx.window:window:1.0.0] /home/z/.gradle/caches/8.14.3/transforms/884182ef76343b45e40ffcb52a656da2/transformed/window-1.0.0/AndroidManifest.xml:25:9-27:40
+129            android:name="androidx.window.extensions"
+129-->[androidx.window:window:1.0.0] /home/z/.gradle/caches/8.14.3/transforms/884182ef76343b45e40ffcb52a656da2/transformed/window-1.0.0/AndroidManifest.xml:26:13-54
+130            android:required="false" />
+130-->[androidx.window:window:1.0.0] /home/z/.gradle/caches/8.14.3/transforms/884182ef76343b45e40ffcb52a656da2/transformed/window-1.0.0/AndroidManifest.xml:27:13-37
+131        <uses-library
+131-->[androidx.window:window:1.0.0] /home/z/.gradle/caches/8.14.3/transforms/884182ef76343b45e40ffcb52a656da2/transformed/window-1.0.0/AndroidManifest.xml:28:9-30:40
+132            android:name="androidx.window.sidecar"
+132-->[androidx.window:window:1.0.0] /home/z/.gradle/caches/8.14.3/transforms/884182ef76343b45e40ffcb52a656da2/transformed/window-1.0.0/AndroidManifest.xml:29:13-51
+133            android:required="false" />
+133-->[androidx.window:window:1.0.0] /home/z/.gradle/caches/8.14.3/transforms/884182ef76343b45e40ffcb52a656da2/transformed/window-1.0.0/AndroidManifest.xml:30:13-37
+134
+135        <receiver
+135-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:34:9-52:20
+136            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+136-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:35:13-76
+137            android:directBootAware="false"
+137-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:36:13-44
+138            android:enabled="true"
+138-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:37:13-35
+139            android:exported="true"
+139-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:38:13-36
+140            android:permission="android.permission.DUMP" >
+140-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:39:13-57
+141            <intent-filter>
+141-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:40:13-42:29
+142                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+142-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:17-91
+142-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:25-88
+143            </intent-filter>
+144            <intent-filter>
+144-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:43:13-45:29
+145                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+145-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:17-85
+145-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:25-82
+146            </intent-filter>
+147            <intent-filter>
+147-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:46:13-48:29
+148                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+148-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:17-88
+148-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:25-85
+149            </intent-filter>
+150            <intent-filter>
+150-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:49:13-51:29
+151                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+151-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:17-95
+151-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/z/.gradle/caches/8.14.3/transforms/a1a2ec89acd8eb937b28e2afb2123e86/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:25-92
+152            </intent-filter>
+153        </receiver>
+154    </application>
+155
+156</manifest>

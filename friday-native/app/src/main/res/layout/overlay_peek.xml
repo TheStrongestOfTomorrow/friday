@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/peekRoot"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/bg_peek_overlay"
+    android:gravity="center_vertical"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="8dp"
+    android:minWidth="200dp">
+
+    <!-- Status dot -->
+    <View
+        android:id="@+id/peekStatusDot"
+        android:layout_width="@dimen/status_dot_size"
+        android:layout_height="@dimen/status_dot_size"
+        android:background="@drawable/bg_sample_dot_filled"
+        android:backgroundTint="@color/brand_purple" />
+
+    <!-- Transcription / status text -->
+    <TextView
+        android:id="@+id/peekText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Listening..."
+        android:textColor="@color/text_primary"
+        android:textSize="14sp"
+        android:singleLine="true"
+        android:ellipsize="end" />
+
+    <!-- Waveform visualization — 5 vertical bars -->
+    <LinearLayout
+        android:id="@+id/peekWaveform"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingStart="4dp">
+
+        <View
+            android:id="@+id/peekBar1"
+            android:layout_width="3dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="1dp"
+            android:background="@color/brand_purple"
+            android:scaleY="0.3" />
+
+        <View
+            android:id="@+id/peekBar2"
+            android:layout_width="3dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="1dp"
+            android:background="@color/brand_purple"
+            android:scaleY="0.6" />
+
+        <View
+            android:id="@+id/peekBar3"
+            android:layout_width="3dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="1dp"
+            android:background="@color/brand_purple"
+            android:scaleY="1.0" />
+
+        <View
+            android:id="@+id/peekBar4"
+            android:layout_width="3dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="1dp"
+            android:background="@color/brand_purple"
+            android:scaleY="0.5" />
+
+        <View
+            android:id="@+id/peekBar5"
+            android:layout_width="3dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="1dp"
+            android:background="@color/brand_purple"
+            android:scaleY="0.8" />
+
+    </LinearLayout>
+
+</LinearLayout>

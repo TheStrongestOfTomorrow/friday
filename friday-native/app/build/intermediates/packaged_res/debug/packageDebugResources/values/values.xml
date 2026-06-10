@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="wake_word_options">
+        <item>Hey Friday</item>
+        <item>OK Friday</item>
+        <item>Hey Assistant</item>
+    </string-array>
+    <color name="bg_card">#1A1A24</color>
+    <color name="bg_card_hover">#22222E</color>
+    <color name="bg_input">#16161F</color>
+    <color name="bg_primary">#0A0A0F</color>
+    <color name="bg_secondary">#111118</color>
+    <color name="black">#000000</color>
+    <color name="brand_purple">#7C3AED</color>
+    <color name="brand_purple_dark">#6D28D9</color>
+    <color name="brand_purple_light">#A78BFA</color>
+    <color name="danger_red">#EF4444</color>
+    <color name="danger_red_dark">#DC2626</color>
+    <color name="divider">#1E1E2E</color>
+    <color name="peek_bg">#CC0A0A0F</color>
+    <color name="status_active">#22C55E</color>
+    <color name="status_error">#EF4444</color>
+    <color name="status_idle">#555566</color>
+    <color name="status_listening">#7C3AED</color>
+    <color name="success_green">#22C55E</color>
+    <color name="success_green_dark">#16A34A</color>
+    <color name="text_muted">#555566</color>
+    <color name="text_primary">#EEEEF0</color>
+    <color name="text_secondary">#8888A4</color>
+    <color name="toggle_track_off">#2A2A3A</color>
+    <color name="toggle_track_on">#7C3AED</color>
+    <color name="transparent">#00000000</color>
+    <color name="warning_amber">#F59E0B</color>
+    <color name="white">#FFFFFF</color>
+    <dimen name="button_height">48dp</dimen>
+    <dimen name="button_height_sm">36dp</dimen>
+    <dimen name="icon_size">24dp</dimen>
+    <dimen name="illustration_size">120dp</dimen>
+    <dimen name="input_height">44dp</dimen>
+    <dimen name="listen_button_size">72dp</dimen>
+    <dimen name="margin_lg">24dp</dimen>
+    <dimen name="margin_md">16dp</dimen>
+    <dimen name="margin_sm">8dp</dimen>
+    <dimen name="margin_xl">32dp</dimen>
+    <dimen name="margin_xs">4dp</dimen>
+    <dimen name="margin_xxl">48dp</dimen>
+    <dimen name="peek_height">56dp</dimen>
+    <dimen name="radius_full">999dp</dimen>
+    <dimen name="radius_lg">16dp</dimen>
+    <dimen name="radius_md">12dp</dimen>
+    <dimen name="radius_sm">8dp</dimen>
+    <dimen name="radius_xl">24dp</dimen>
+    <dimen name="status_dot_size">10dp</dimen>
+    <dimen name="text_hero">36sp</dimen>
+    <dimen name="text_lg">18sp</dimen>
+    <dimen name="text_md">15sp</dimen>
+    <dimen name="text_sm">13sp</dimen>
+    <dimen name="text_xl">22sp</dimen>
+    <dimen name="text_xs">11sp</dimen>
+    <dimen name="text_xxl">28sp</dimen>
+    <string name="app_name">Friday</string>
+    <string name="btn_listen">Tap to Listen</string>
+    <string name="btn_listening">Listening…</string>
+    <string name="cancel">Cancel</string>
+    <string name="custom">Custom</string>
+    <string name="default_str">Default</string>
+    <string name="disabled">Disabled</string>
+    <string name="done">Done</string>
+    <string name="enabled">Enabled</string>
+    <string name="no">No</string>
+    <string name="ok">OK</string>
+    <string name="onboard_assistant_subtitle">Set Friday as your default assistant to activate it from any screen.</string>
+    <string name="onboard_assistant_title">Make Friday Your Assistant</string>
+    <string name="onboard_audio_test_title">Let\'s Test Your Voice</string>
+    <string name="onboard_battery_subtitle">Disable battery optimization so Friday stays ready.</string>
+    <string name="onboard_battery_title">Keep Friday Running</string>
+    <string name="onboard_complete_subtitle">Setup complete. Here\'s what was configured:</string>
+    <string name="onboard_complete_title">Friday is Ready!</string>
+    <string name="onboard_continue">Continue</string>
+    <string name="onboard_disable_battery">Disable Battery Optimization</string>
+    <string name="onboard_ducking_subtitle">When Friday listens, background media is automatically lowered.</string>
+    <string name="onboard_ducking_title">Media Control Test</string>
+    <string name="onboard_get_started">Get Started</string>
+    <string name="onboard_grant_permissions">Grant Permissions</string>
+    <string name="onboard_peek_subtitle">A minimal floating overlay for status and transcriptions.</string>
+    <string name="onboard_peek_title">The Peek GUI</string>
+    <string name="onboard_permissions_subtitle">These permissions enable Friday\'s core features.</string>
+    <string name="onboard_permissions_title">Friday Needs Access</string>
+    <string name="onboard_record_sample">Record Sample</string>
+    <string name="onboard_set_assistant">Set as Default Assistant</string>
+    <string name="onboard_skip">Skip</string>
+    <string name="onboard_skip_battery">I\'ll do it later</string>
+    <string name="onboard_skip_permissions">Skip for now</string>
+    <string name="onboard_start_friday">Start Using Friday</string>
+    <string name="onboard_start_listening">Start Listening</string>
+    <string name="onboard_test_ducking">Test Audio Ducking</string>
+    <string name="onboard_test_voice">Test Voice</string>
+    <string name="onboard_tts_subtitle">Customize how Friday speaks to you.</string>
+    <string name="onboard_tts_title">Friday\'s Voice</string>
+    <string name="onboard_use_defaults">Use Default Settings</string>
+    <string name="onboard_wakeword_subtitle">Train Friday to recognize your wake word.</string>
+    <string name="onboard_wakeword_title">Teach Friday Your Voice</string>
+    <string name="onboard_welcome_subtitle">Your personal AI assistant. Private. Powerful. Yours.</string>
+    <string name="onboard_welcome_title">Meet Friday</string>
+    <string name="peek_listening">Listening…</string>
+    <string name="peek_waiting">Waiting…</string>
+    <string name="perm_contacts">Contacts</string>
+    <string name="perm_contacts_reason">Allows voice dialing and contact lookups</string>
+    <string name="perm_microphone">Microphone</string>
+    <string name="perm_microphone_reason">Required for wake word detection and voice commands</string>
+    <string name="perm_notifications">Notifications</string>
+    <string name="perm_notifications_reason">Status updates and background service alerts</string>
+    <string name="perm_overlay">Display Over Apps</string>
+    <string name="perm_overlay_reason">Shows the Peek GUI overlay on top of other apps</string>
+    <string name="service_channel_desc">Background listening service for Friday</string>
+    <string name="service_channel_name">Friday Service</string>
+    <string name="service_notification_text">Tap to open Friday</string>
+    <string name="service_notification_title">Friday is Listening</string>
+    <string name="settings_about">About</string>
+    <string name="settings_assistant">Default Assistant</string>
+    <string name="settings_battery_opt">Battery Optimization</string>
+    <string name="settings_peek_gui">Peek GUI</string>
+    <string name="settings_reset">Reset All Settings</string>
+    <string name="settings_run_onboarding">Run Onboarding Again</string>
+    <string name="settings_start_on_boot">Start on Boot</string>
+    <string name="settings_stealth_mode">Stealth Mode</string>
+    <string name="settings_tts_pitch">Pitch</string>
+    <string name="settings_tts_rate">Speech Rate</string>
+    <string name="settings_version">Version 3.0.0</string>
+    <string name="settings_wake_word">Wake Word</string>
+    <string name="skipped">Skipped</string>
+    <string name="status_error">Error</string>
+    <string name="status_idle">Idle</string>
+    <string name="status_idle_desc">Tap the mic or say your wake word.</string>
+    <string name="status_listening">Listening</string>
+    <string name="status_listening_desc">Speak your command…</string>
+    <string name="status_processing">Processing</string>
+    <string name="title_onboarding">Setup Friday</string>
+    <string name="title_settings">Settings</string>
+    <string name="yes">Yes</string>
+    <style name="FridayBody">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_md</item>
+        <item name="android:lineSpacingMultiplier">1.4</item>
+    </style>
+    <style name="FridayCaption">
+        <item name="android:textColor">@color/text_muted</item>
+        <item name="android:textSize">@dimen/text_sm</item>
+    </style>
+    <style name="FridaySubtitle">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">@dimen/text_md</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:lineSpacingMultiplier">1.4</item>
+    </style>
+    <style name="FridayTitle">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_xxl</item>
+        <item name="android:fontFamily">sans-serif-bold</item>
+    </style>
+    <style name="OnboardSubtitle">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">@dimen/text_md</item>
+        <item name="android:gravity">center</item>
+        <item name="android:lineSpacingMultiplier">1.4</item>
+    </style>
+    <style name="OnboardTitle">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_xxl</item>
+        <item name="android:fontFamily">sans-serif-bold</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="Theme.Friday" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_purple</item>
+        <item name="colorPrimaryDark">@color/brand_purple_dark</item>
+        <item name="colorAccent">@color/brand_purple_light</item>
+        <item name="colorSurface">@color/bg_card</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="android:windowBackground">@color/bg_primary</item>
+        <item name="android:statusBarColor">@color/bg_primary</item>
+        <item name="android:navigationBarColor">@color/bg_primary</item>
+        <item name="android:colorBackground">@color/bg_primary</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:textColorHint">@color/text_muted</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="materialButtonStyle">@style/Widget.Friday.Button</item>
+        <item name="editTextStyle">@style/Widget.Friday.EditText</item>
+        <item name="switchStyle">@style/Widget.Friday.Switch</item>
+    </style>
+    <style name="Widget.Friday.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="backgroundTint">@color/brand_purple</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+    <style name="Widget.Friday.Button.Danger" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="backgroundTint">@color/danger_red</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+    <style name="Widget.Friday.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="strokeColor">@color/divider</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="backgroundTint">@color/transparent</item>
+    </style>
+    <style name="Widget.Friday.Card" parent="">
+        <item name="android:background">@drawable/bg_card</item>
+        <item name="android:padding">@dimen/margin_md</item>
+    </style>
+    <style name="Widget.Friday.EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">@color/text_muted</item>
+        <item name="android:padding">@dimen/margin_md</item>
+        <item name="android:textSize">@dimen/text_md</item>
+    </style>
+    <style name="Widget.Friday.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="trackTint">@color/toggle_track_off</item>
+        <item name="thumbTint">@color/text_secondary</item>
+        <item name="android:thumbTint">@color/toggle_thumb_selector</item>
+    </style>
+</resources>
