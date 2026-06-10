@@ -1,0 +1,26 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Android build outputs
+/app/build/
+/build/
+
+# Keystore files (never commit these)
+*.jks
+*.keystore
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# IDE
+.idea/
+*.iml

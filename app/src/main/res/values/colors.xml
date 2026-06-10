@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand_purple">#7C3AED</color>
+    <color name="brand_purple_dark">#6D28D9</color>
+    <color name="brand_purple_light">#A78BFA</color>
+    <color name="bg_primary">#0A0A0F</color>
+    <color name="bg_secondary">#111118</color>
+    <color name="bg_card">#1A1A24</color>
+    <color name="bg_card_hover">#22222E</color>
+    <color name="bg_input">#16161F</color>
+    <color name="text_primary">#EEEEF0</color>
+    <color name="text_secondary">#8888A4</color>
+    <color name="text_muted">#555566</color>
+    <color name="success_green">#22C55E</color>
+    <color name="success_green_dark">#16A34A</color>
+    <color name="warning_amber">#F59E0B</color>
+    <color name="danger_red">#EF4444</color>
+    <color name="danger_red_dark">#DC2626</color>
+    <color name="divider">#1E1E2E</color>
+    <color name="peek_bg">#CC0A0A0F</color>
+    <color name="status_listening">#7C3AED</color>
+    <color name="status_active">#22C55E</color>
+    <color name="status_idle">#555566</color>
+    <color name="status_error">#EF4444</color>
+    <color name="toggle_track_off">#2A2A3A</color>
+    <color name="toggle_track_on">#7C3AED</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+</resources>

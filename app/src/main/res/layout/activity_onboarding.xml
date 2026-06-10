@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_primary">
+
+    <!-- Progress bar container -->
+    <FrameLayout
+        android:id="@+id/progressContainer"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginStart="@dimen/margin_md"
+        android:layout_marginEnd="@dimen/margin_md"
+        android:layout_marginTop="@dimen/margin_md"
+        android:background="@drawable/bg_progress">
+
+        <View
+            android:id="@+id/progressFill"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_progress_fill" />
+
+    </FrameLayout>
+
+    <!-- ViewPager2 for onboarding screens -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="@dimen/margin_md" />
+
+    <!-- Bottom navigation bar -->
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="@dimen/margin_md"
+        android:paddingBottom="@dimen/margin_lg">
+
+        <!-- Back button — ghost style -->
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/button_height"
+            android:text="@string/onboard_skip"
+            android:textColor="@color/text_secondary"
+            android:background="@drawable/bg_button_ghost"
+            android:drawableStart="@drawable/ic_arrow_back"
+            android:drawablePadding="4dp"
+            android:minWidth="80dp"
+            android:paddingStart="@dimen/margin_md"
+            android:paddingEnd="@dimen/margin_md"
+            android:textSize="@dimen/text_sm" />
+
+        <!-- Spacer -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Skip button — ghost style -->
+        <Button
+            android:id="@+id/btnSkip"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/button_height"
+            android:text="@string/onboard_skip"
+            android:textColor="@color/text_secondary"
+            android:background="@drawable/bg_button_ghost"
+            android:minWidth="72dp"
+            android:paddingStart="@dimen/margin_md"
+            android:paddingEnd="@dimen/margin_md"
+            android:textSize="@dimen/text_sm"
+            android:layout_marginEnd="@dimen/margin_sm" />
+
+        <!-- Continue / Next button — primary style -->
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/button_height"
+            android:text="@string/onboard_continue"
+            android:textColor="@color/text_primary"
+            android:background="@drawable/bg_button_primary"
+            android:drawableEnd="@drawable/ic_arrow_forward"
+            android:drawablePadding="4dp"
+            android:minWidth="100dp"
+            android:paddingStart="@dimen/margin_md"
+            android:paddingEnd="@dimen/margin_md"
+            android:textSize="@dimen/text_sm" />
+
+    </LinearLayout>
+
+</LinearLayout>
