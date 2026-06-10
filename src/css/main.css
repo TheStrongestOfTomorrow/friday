@@ -386,6 +386,175 @@ a:hover {
   border-top: 1px solid var(--border-subtle);
 }
 
+/* ─── Listen Button (Phase 2) ────────────────────────────── */
+
+.listen-section {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-lg) 0;
+}
+
+.listen-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.listen-ring {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 2px solid var(--border-default);
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.listen-btn:hover .listen-ring {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 24px var(--accent-glow);
+}
+
+.listen-btn:active .listen-ring {
+  transform: scale(0.95);
+}
+
+.listen-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-primary), #a855f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px var(--accent-glow);
+  transition: all var(--transition-base);
+}
+
+.listen-circle canvas {
+  width: 48px;
+  height: 48px;
+}
+
+/* Active listening state */
+.listen-btn.listening .listen-ring {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 40px var(--accent-glow);
+  animation: listenPulse 1.5s ease-in-out infinite;
+}
+
+.listen-btn.listening .listen-circle {
+  background: linear-gradient(135deg, #a855f7, #c084fc);
+  box-shadow: 0 0 24px rgba(124, 58, 237, 0.5);
+}
+
+/* Ripple rings around the listen button when active */
+.listen-btn.listening .listen-ring::before,
+.listen-btn.listening .listen-ring::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  animation: listenRipple 2s ease-out infinite;
+}
+
+.listen-btn.listening .listen-ring::after {
+  animation-delay: 0.5s;
+}
+
+@keyframes listenPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes listenRipple {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.listen-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.listen-btn.listening .listen-label {
+  color: var(--accent-primary);
+}
+
+/* ─── Transcription Card (Phase 2) ──────────────────────── */
+
+.transcription-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  animation: fadeIn 0.3s ease;
+}
+
+.transcription-card.listening {
+  border-color: var(--border-accent);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.transcription-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.transcription-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+.transcription-status {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--accent-dim);
+  color: var(--accent-primary);
+}
+
+.transcription-status.final {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--status-active);
+}
+
+.transcription-status.error {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--status-error);
+}
+
+.transcription-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 24px;
+}
+
+.transcription-text.partial {
+  color: var(--accent-hover);
+  font-style: italic;
+}
+
 /* Utility */
 .hidden {
   display: none !important;

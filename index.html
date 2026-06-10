@@ -12,7 +12,7 @@
   <!-- Peek Overlay (always present, toggled by JS) -->
   <div id="peek-overlay" class="peek-overlay" aria-label="Friday voice overlay">
     <div class="peek-inner">
-      <div class="peek-waveform">
+      <div class="peek-waveform" id="peek-waveform">
         <canvas id="waveform-canvas" width="120" height="32"></canvas>
       </div>
       <div class="peek-status">
@@ -42,7 +42,28 @@
             <div id="status-dot" class="status-dot idle"></div>
             <span id="status-label" class="status-label">Idle</span>
           </div>
-          <p class="status-desc">Friday is standing by. Say the wake word to activate.</p>
+          <p id="status-desc" class="status-desc">Friday is standing by. Say the wake word to activate.</p>
+        </div>
+
+        <!-- Listen Button (Phase 2: Manual trigger until wake word is built) -->
+        <div class="listen-section">
+          <button class="listen-btn" id="btn-listen">
+            <div class="listen-ring">
+              <div class="listen-circle">
+                <canvas id="listen-wave-canvas" width="48" height="48"></canvas>
+              </div>
+            </div>
+            <span class="listen-label" id="listen-label">Tap to Listen</span>
+          </button>
+        </div>
+
+        <!-- Live Transcription Card (shows recognized text) -->
+        <div id="transcription-card" class="transcription-card hidden">
+          <div class="transcription-header">
+            <span class="transcription-title">Transcription</span>
+            <span id="transcription-status" class="transcription-status">Listening...</span>
+          </div>
+          <p id="transcription-text" class="transcription-text"></p>
         </div>
 
         <div class="quick-actions">
@@ -80,7 +101,7 @@
     </main>
 
     <footer class="app-footer">
-      <span>Friday v0.1.0 &middot; Phase 1</span>
+      <span>Friday v0.2.0 &middot; Phase 2</span>
     </footer>
   </div>
 

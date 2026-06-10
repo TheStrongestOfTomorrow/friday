@@ -1,5 +1,7 @@
 /* ============================================
    Friday — Peek Overlay Styles
+   Phase 2: Added listening pulse animation,
+   expanded transcription mode
    ============================================ */
 
 .peek-overlay {
@@ -38,6 +40,7 @@
     0 0 20px rgba(124, 58, 237, 0.15),
     0 8px 32px rgba(0, 0, 0, 0.4);
   min-width: 200px;
+  max-width: 360px;
   transition: all var(--transition-base);
 }
 
@@ -48,7 +51,39 @@
     0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
-/* Waveform */
+/* ─── Listening Pulse Animation ─────────────────────────── */
+
+.peek-overlay.listening .peek-inner {
+  border-color: rgba(124, 58, 237, 0.6);
+  box-shadow:
+    0 0 40px rgba(124, 58, 237, 0.4),
+    0 0 80px rgba(124, 58, 237, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.5);
+  animation: peekPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes peekPulse {
+  0% {
+    box-shadow:
+      0 0 40px rgba(124, 58, 237, 0.4),
+      0 0 80px rgba(124, 58, 237, 0.15),
+      0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 60px rgba(124, 58, 237, 0.55),
+      0 0 100px rgba(124, 58, 237, 0.25),
+      0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+  100% {
+    box-shadow:
+      0 0 40px rgba(124, 58, 237, 0.4),
+      0 0 80px rgba(124, 58, 237, 0.15),
+      0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Waveform container — pulses when listening */
 .peek-waveform {
   flex-shrink: 0;
   width: 40px;
@@ -56,11 +91,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
 .peek-waveform canvas {
   width: 100%;
   height: 100%;
+}
+
+/* Pulse ring behind the waveform when listening */
+.peek-overlay.listening .peek-waveform::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.15);
+  animation: wavePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes wavePulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.3); opacity: 0.2; }
 }
 
 /* Status text */
@@ -81,6 +132,30 @@
 
 .peek-overlay.active .peek-text {
   color: var(--accent-primary);
+}
+
+.peek-overlay.listening .peek-text {
+  color: var(--accent-hover);
+  animation: textGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes textGlow {
+  0%, 100% { text-shadow: 0 0 4px rgba(124, 58, 237, 0.3); }
+  50% { text-shadow: 0 0 12px rgba(124, 58, 237, 0.6); }
+}
+
+/* Expanded transcription mode (Peek expands to show more text) */
+.peek-overlay.transcribing .peek-inner {
+  border-radius: 16px;
+  max-width: 90vw;
+  padding: 12px 20px;
+}
+
+.peek-overlay.transcribing .peek-text {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  min-height: 1.4em;
 }
 
 /* Landscape: bottom-right */
