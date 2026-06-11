@@ -58,7 +58,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // ─── General ───────────────────────────────────────────
         TextView tvVersion = findViewById(R.id.tvVersion);
-        tvVersion.setText("v3.1.0");
+        tvVersion.setText("v3.2.0");
 
         Button btnRunOnboarding = findViewById(R.id.btnRunOnboarding);
         btnRunOnboarding.setOnClickListener(v -> {
@@ -243,6 +243,12 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 }
             }
+        });
+
+        // Custom Commands
+        Button btnCustomCommands = findViewById(R.id.btnCustomCommands);
+        btnCustomCommands.setOnClickListener(v -> {
+            startActivity(new Intent(this, CustomCommandsActivity.class));
         });
     }
 

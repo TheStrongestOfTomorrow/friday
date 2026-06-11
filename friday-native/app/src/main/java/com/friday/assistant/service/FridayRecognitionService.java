@@ -3,7 +3,7 @@ package com.friday.assistant.service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognitionService;
-import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.util.Log;
 
 /**
@@ -15,8 +15,8 @@ import android.util.Log;
  * android:recognitionService attribute in voice_interaction.xml.
  *
  * This service delegates to the device's default speech recognizer
- * (typically Google's) so Friday can work with whatever recognizer
- * the user has installed.
+ * (Google Speech Services) so Friday works with whatever recognizer
+ * the user has installed — no custom ASR engine needed.
  */
 public class FridayRecognitionService extends RecognitionService {
 
@@ -44,22 +44,14 @@ public class FridayRecognitionService extends RecognitionService {
             // Signal that we're ready for speech
             listener.readyForSpeech(new Bundle());
 
-            // In a full implementation, you would:
-            // 1. Start the device's SpeechRecognizer
-            // 2. Forward all callbacks (onResults, onPartialResults, onError, etc.)
-            //    through the listener parameter
-            //
-            // For now, we signal that we're listening. The actual speech recognition
-            // is handled by MainActivity when it opens via FridaySession.
-            //
-            // This service existing is what makes Android show Friday in the
-            // assistant picker. The real recognition happens through
-            // FridaySpeechRecognizer in the Activity layer.
-
+            // The actual speech recognition is handled by FridaySession
+            // which uses FridaySpeechRecognizer (wrapping Google Speech Services).
+            // This service's existence is what makes Android show Friday in the
+            // assistant picker — the real recognition happens in the session layer.
         } catch (Exception e) {
             Log.e(TAG, "Error in onStartListening", e);
             try {
-                listener.error(8); // ERROR_CLIENT
+                listener.error(SpeechRecognizer.ERROR_CLIENT);
             } catch (Exception ignored) {}
         }
     }

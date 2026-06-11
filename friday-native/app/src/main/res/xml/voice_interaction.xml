@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <voice-interaction-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:sessionService="com.friday.assistant.service.FridaySessionService"
+    android:recognitionService="com.friday.assistant.service.FridayRecognitionService"
     android:settingsActivity="com.friday.assistant.SettingsActivity"
-    android:recognitionService="com.friday.assistant.service.FridayRecognitionService" />
+    android:supportsAssist="true"
+    android:supportsLaunchVoiceAssistFromKeyguard="true"
+    android:supportsLocalInteraction="true" />

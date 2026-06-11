@@ -1,6 +1,6 @@
 package com.friday.assistant.service;
 
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.service.voice.VoiceInteractionSession;
 import android.service.voice.VoiceInteractionSessionService;
@@ -11,11 +11,11 @@ import android.util.Log;
  *
  * REQUIRED for Friday to appear in the default assistant picker.
  * Android will not show an app as a selectable assistant unless
- * it provides both a VoiceInteractionService AND a
- * VoiceInteractionSessionService.
+ * it provides both VoiceInteractionService AND VoiceInteractionSessionService.
  *
  * This service creates the session that handles the actual
- * interaction when the user activates the assistant.
+ * interaction when the user activates the assistant (long-press home,
+ * assistant gesture, etc).
  */
 public class FridaySessionService extends VoiceInteractionSessionService {
 

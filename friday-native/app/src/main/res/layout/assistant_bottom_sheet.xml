@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/bg_primary"
+    android:padding="24dp"
+    android:gravity="center_horizontal">
+
+    <!-- Status text -->
+    <TextView
+        android:id="@+id/tvAssistantStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Listening..."
+        android:textColor="@color/text_primary"
+        android:textSize="18sp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:paddingBottom="12dp" />
+
+    <!-- Transcription -->
+    <TextView
+        android:id="@+id/tvAssistantTranscription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:visibility="visible"
+        android:paddingBottom="16dp"
+        android:maxLines="3"
+        android:ellipsize="end" />
+
+    <!-- Wave indicator -->
+    <LinearLayout
+        android:id="@+id/waveIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <View android:layout_width="3dp" android:layout_height="6dp"
+            android:layout_margin="2dp" android:background="@color/brand_purple" />
+        <View android:layout_width="3dp" android:layout_height="12dp"
+            android:layout_margin="2dp" android:background="@color/brand_purple" />
+        <View android:layout_width="3dp" android:layout_height="20dp"
+            android:layout_margin="2dp" android:background="@color/brand_purple" />
+        <View android:layout_width="3dp" android:layout_height="12dp"
+            android:layout_margin="2dp" android:background="@color/brand_purple" />
+        <View android:layout_width="3dp" android:layout_height="6dp"
+            android:layout_margin="2dp" android:background="@color/brand_purple" />
+    </LinearLayout>
+
+    <!-- Progress -->
+    <ProgressBar
+        android:id="@+id/assistantProgressBar"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginBottom="12dp"
+        android:visibility="gone"
+        android:indeterminateTint="@color/brand_purple" />
+
+    <!-- Mic button -->
+    <ImageButton
+        android:id="@+id/btnAssistantMic"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@drawable/ic_mic"
+        android:background="@drawable/bg_listen_button"
+        android:contentDescription="Listen"
+        android:scaleType="centerInside"
+        android:padding="16dp" />
+
+</LinearLayout>

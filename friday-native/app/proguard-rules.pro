@@ -8,3 +8,14 @@
 
 # TTS
 -keep class android.speech.tts.** { *; }
+
+# Room entities and DAOs
+-keep class * extends androidx.room.RoomDatabase
+-keep @androidx.room.Entity class *
+-keep @androidx.room.Dao interface *
+-keepclassmembers class * {
+    @androidx.room.Insert *;
+    @androidx.room.Query *;
+    @androidx.room.Update *;
+    @androidx.room.Delete *;
+}

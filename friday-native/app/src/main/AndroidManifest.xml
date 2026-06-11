@@ -18,6 +18,8 @@
         android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
 
     <uses-feature android:name="android.hardware.microphone" android:required="true" />
 
@@ -29,7 +31,7 @@
         android:theme="@style/Theme.Friday"
         tools:targetApi="36">
 
-        <!-- Main Activity -->
+        <!-- ═══ Main Activity ═══ -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -41,24 +43,50 @@
             </intent-filter>
         </activity>
 
-        <!-- Onboarding Activity -->
+        <!-- ═══ Assistant Activity — handles the ASSIST intent ═══ -->
+        <activity
+            android:name=".AssistantActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Friday.Assistant"
+            android:excludeFromRecents="true"
+            android:taskAffinity="com.friday.assistant.assistant">
+            <intent-filter>
+                <action android:name="android.intent.action.ASSIST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- ═══ Onboarding Activity ═══ -->
         <activity
             android:name=".OnboardingActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 
-        <!-- Settings Activity -->
+        <!-- ═══ Settings Activity ═══ -->
         <activity
             android:name=".SettingsActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="@string/title_settings" />
 
-        <!-- Voice Interaction Service — allows Friday to be set as default assistant -->
+        <!-- ═══ Custom Commands Activity ═══ -->
+        <activity
+            android:name=".CustomCommandsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:label="Custom Commands" />
+
+        <!-- ═══ Voice Interaction Service ═══ -->
+        <!-- This is the bootstrap point that Android uses to recognise Friday
+             as a valid assistant. Without it, Friday never appears in the
+             default assistant picker. -->
         <service
             android:name=".service.FridayVoiceInteractionService"
-            android:exported="true"
-            android:permission="android.permission.BIND_VOICE_INTERACTION">
+            android:label="Friday"
+            android:permission="android.permission.BIND_VOICE_INTERACTION"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.service.voice.VoiceInteractionService" />
             </intent-filter>
@@ -67,17 +95,24 @@
                 android:resource="@xml/voice_interaction" />
         </service>
 
-        <!-- Voice Interaction Session Service — REQUIRED for assistant picker to show Friday -->
+        <!-- ═══ Voice Interaction Session Service ═══ -->
+        <!-- REQUIRED: Android will not show Friday in the assistant picker
+             unless both VoiceInteractionService AND VoiceInteractionSessionService
+             are declared and properly linked via voice_interaction.xml. -->
         <service
             android:name=".service.FridaySessionService"
-            android:exported="true"
-            android:permission="android.permission.BIND_VOICE_INTERACTION" />
+            android:label="Friday Session"
+            android:permission="android.permission.BIND_VOICE_INTERACTION"
+            android:exported="true" />
 
-        <!-- Recognition Service — REQUIRED for assistant picker on Android 13+ -->
+        <!-- ═══ Recognition Service ═══ -->
+        <!-- Required by voice_interaction.xml's recognitionService attribute.
+             Delegates to the device's built-in Google Speech Services. -->
         <service
             android:name=".service.FridayRecognitionService"
-            android:exported="true"
-            android:permission="android.permission.BIND_VOICE_INTERACTION">
+            android:label="Friday Speech Recognition"
+            android:permission="android.permission.BIND_VOICE_INTERACTION"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.speech.RecognitionService" />
             </intent-filter>
@@ -86,19 +121,19 @@
                 android:resource="@xml/voice_interaction" />
         </service>
 
-        <!-- Foreground Service -->
+        <!-- ═══ Foreground Service ═══ -->
         <service
             android:name=".service.FridayForegroundService"
             android:exported="false"
             android:foregroundServiceType="microphone|mediaPlayback"
             android:stopWithTask="false" />
 
-        <!-- Peek Overlay Service -->
+        <!-- ═══ Peek Overlay Service ═══ -->
         <service
             android:name=".service.PeekOverlayService"
             android:exported="false" />
 
-        <!-- Boot Receiver -->
+        <!-- ═══ Boot Receiver ═══ -->
         <receiver
             android:name=".service.BootReceiver"
             android:exported="true"
