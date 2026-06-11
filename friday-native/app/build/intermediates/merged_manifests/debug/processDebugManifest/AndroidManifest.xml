@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.friday.assistant"
-    android:versionCode="5"
-    android:versionName="3.1.0" >
+    android:versionCode="6"
+    android:versionName="3.2.0" >
 
     <uses-sdk
         android:minSdkVersion="26"
@@ -25,6 +25,8 @@
         android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
 
     <uses-feature
         android:name="android.hardware.microphone"
@@ -46,7 +48,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Friday" >
 
-        <!-- Main Activity -->
+        <!-- ═══ Main Activity ═══ -->
         <activity
             android:name="com.friday.assistant.MainActivity"
             android:exported="true"
@@ -59,23 +61,52 @@
             </intent-filter>
         </activity>
 
-        <!-- Onboarding Activity -->
+        <!-- ═══ Assistant Activity — handles the ASSIST intent ═══ -->
+        <activity
+            android:name="com.friday.assistant.AssistantActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:taskAffinity="com.friday.assistant.assistant"
+            android:theme="@style/Theme.Friday.Assistant" >
+            <intent-filter>
+                <action android:name="android.intent.action.ASSIST" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- ═══ Onboarding Activity ═══ -->
         <activity
             android:name="com.friday.assistant.OnboardingActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 
-        <!-- Settings Activity -->
+        <!-- ═══ Settings Activity ═══ -->
         <activity
             android:name="com.friday.assistant.SettingsActivity"
             android:exported="false"
             android:label="@string/title_settings"
             android:screenOrientation="portrait" />
 
-        <!-- Voice Interaction Service — allows Friday to be set as default assistant -->
+        <!-- ═══ Custom Commands Activity ═══ -->
+        <activity
+            android:name="com.friday.assistant.CustomCommandsActivity"
+            android:exported="false"
+            android:label="Custom Commands"
+            android:screenOrientation="portrait" />
+
+        <!-- ═══ Voice Interaction Service ═══ -->
+        <!--
+             This is the bootstrap point that Android uses to recognise Friday
+             as a valid assistant. Without it, Friday never appears in the
+             default assistant picker.
+        -->
         <service
             android:name="com.friday.assistant.service.FridayVoiceInteractionService"
             android:exported="true"
+            android:label="Friday"
             android:permission="android.permission.BIND_VOICE_INTERACTION" >
             <intent-filter>
                 <action android:name="android.service.voice.VoiceInteractionService" />
@@ -86,16 +117,27 @@
                 android:resource="@xml/voice_interaction" />
         </service>
 
-        <!-- Voice Interaction Session Service — REQUIRED for assistant picker to show Friday -->
+        <!-- ═══ Voice Interaction Session Service ═══ -->
+        <!--
+             REQUIRED: Android will not show Friday in the assistant picker
+             unless both VoiceInteractionService AND VoiceInteractionSessionService
+             are declared and properly linked via voice_interaction.xml.
+        -->
         <service
             android:name="com.friday.assistant.service.FridaySessionService"
             android:exported="true"
+            android:label="Friday Session"
             android:permission="android.permission.BIND_VOICE_INTERACTION" />
 
-        <!-- Recognition Service — REQUIRED for assistant picker on Android 13+ -->
+        <!-- ═══ Recognition Service ═══ -->
+        <!--
+             Required by voice_interaction.xml's recognitionService attribute.
+             Delegates to the device's built-in Google Speech Services.
+        -->
         <service
             android:name="com.friday.assistant.service.FridayRecognitionService"
             android:exported="true"
+            android:label="Friday Speech Recognition"
             android:permission="android.permission.BIND_VOICE_INTERACTION" >
             <intent-filter>
                 <action android:name="android.speech.RecognitionService" />
@@ -106,19 +148,19 @@
                 android:resource="@xml/voice_interaction" />
         </service>
 
-        <!-- Foreground Service -->
+        <!-- ═══ Foreground Service ═══ -->
         <service
             android:name="com.friday.assistant.service.FridayForegroundService"
             android:exported="false"
             android:foregroundServiceType="microphone|mediaPlayback"
             android:stopWithTask="false" />
 
-        <!-- Peek Overlay Service -->
+        <!-- ═══ Peek Overlay Service ═══ -->
         <service
             android:name="com.friday.assistant.service.PeekOverlayService"
             android:exported="false" />
 
-        <!-- Boot Receiver -->
+        <!-- ═══ Boot Receiver ═══ -->
         <receiver
             android:name="com.friday.assistant.service.BootReceiver"
             android:enabled="true"
@@ -129,6 +171,11 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name="androidx.room.MultiInstanceInvalidationService"
+            android:directBootAware="true"
+            android:exported="false" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

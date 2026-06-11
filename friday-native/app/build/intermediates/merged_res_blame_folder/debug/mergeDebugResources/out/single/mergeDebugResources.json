@@ -1,122 +1,130 @@
 [
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_ic_arrow_forward.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/ic_arrow_forward.xml"
+        "merged": "com.friday.assistant.app-debug-43:/xml_voice_interaction.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/xml/voice_interaction.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/xml_voice_interaction.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/xml/voice_interaction.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_ic_settings.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/ic_settings.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_progress_fill.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_progress_fill.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_progress.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_progress.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_button_danger.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_button_danger.xml"
+        "merged": "com.friday.assistant.app-debug-43:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/anim_pulse.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/anim/pulse.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_ic_mic.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/ic_mic.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_permission_item.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_permission_item.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_button_primary.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_button_primary.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_divider.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_divider.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_divider.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_divider.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_progress.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_progress.xml"
+        "merged": "com.friday.assistant.app-debug-43:/layout_activity_settings.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/layout/activity_settings.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_input.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_input.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_sample_dot.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_sample_dot.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_button_ghost.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_button_ghost.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_ic_arrow_forward.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/ic_arrow_forward.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/ic_launcher_foreground.xml"
+        "merged": "com.friday.assistant.app-debug-43:/layout_activity_onboarding.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/layout/activity_onboarding.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/layout_activity_settings.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/layout/activity_settings.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_input.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_input.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "com.friday.assistant.app-debug-43:/color_toggle_thumb_selector.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/color/toggle_thumb_selector.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_button_primary.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_button_primary.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_button_danger.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_button_danger.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_listen_button.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_listen_button.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_peek_overlay.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_peek_overlay.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_ic_settings.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/ic_settings.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_listen_button.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_listen_button.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_sample_dot.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_sample_dot.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_ic_arrow_back.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/ic_arrow_back.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/color_toggle_thumb_selector.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/color/toggle_thumb_selector.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_illustration_circle.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_illustration_circle.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "com.friday.assistant.app-debug-43:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/layout_overlay_peek.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/layout/overlay_peek.xml"
+        "merged": "com.friday.assistant.app-debug-43:/anim_pulse.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/anim/pulse.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_ic_arrow_back.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/ic_arrow_back.xml"
+        "merged": "com.friday.assistant.app-debug-43:/layout_assistant_bottom_sheet.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/layout/assistant_bottom_sheet.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/layout_activity_onboarding.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/layout/activity_onboarding.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_card.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_card.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_ic_mic.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/ic_mic.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_button_ghost.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_button_ghost.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_sample_dot_filled.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_sample_dot_filled.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_listen_button_listening.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_listen_button_listening.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_card.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_card.xml"
+        "merged": "com.friday.assistant.app-debug-43:/layout_activity_main.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/layout/activity_main.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_peek_overlay.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_peek_overlay.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_progress_fill.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_progress_fill.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_illustration_circle.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_illustration_circle.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_status_dot.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_status_dot.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_permission_item.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_permission_item.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/layout_activity_main.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/layout/activity_main.xml"
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_sample_dot_filled.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_sample_dot_filled.xml"
     },
     {
-        "merged": "com.friday.assistant.app-debug-40:/drawable_bg_listen_button_listening.xml.flat",
-        "source": "com.friday.assistant.app-main-42:/drawable/bg_listen_button_listening.xml"
+        "merged": "com.friday.assistant.app-debug-43:/layout_overlay_peek.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/layout/overlay_peek.xml"
+    },
+    {
+        "merged": "com.friday.assistant.app-debug-43:/layout_activity_assistant.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/layout/activity_assistant.xml"
+    },
+    {
+        "merged": "com.friday.assistant.app-debug-43:/drawable_bg_status_dot.xml.flat",
+        "source": "com.friday.assistant.app-main-45:/drawable/bg_status_dot.xml"
     }
 ]

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.friday.assistant.app-mergeDebugResources-38:/values-bg/values-bg.xml",
+            "outputFile": "com.friday.assistant.app-mergeDebugResources-41:/values-bg/values-bg.xml",
             "map": [
                 {
                     "source": "/home/z/.gradle/caches/8.14.3/transforms/10eae8620299ff736d53d4e2881d3208/transformed/preference-1.2.1/res/values-bg/values-bg.xml",

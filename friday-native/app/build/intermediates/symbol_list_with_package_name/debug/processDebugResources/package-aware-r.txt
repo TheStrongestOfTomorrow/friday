@@ -3346,6 +3346,8 @@ id antiClockwise
 id anticipate
 id arc
 id asConfigured
+id assistantProgressBar
+id assistantRoot
 id async
 id auto
 id autoComplete
@@ -3365,8 +3367,11 @@ id bounce
 id bounceBoth
 id bounceEnd
 id bounceStart
+id btnAssistantMic
 id btnBack
 id btnBackSettings
+id btnClose
+id btnCustomCommands
 id btnDisableBattery
 id btnListen
 id btnNext
@@ -3799,6 +3804,8 @@ id transition_position
 id transition_scene_layoutid_cache
 id transition_transform
 id triangle
+id tvAssistantStatus
+id tvAssistantTranscription
 id tvConfidenceValue
 id tvTtsPitchValue
 id tvTtsRateValue
@@ -3819,6 +3826,7 @@ id view_tree_saved_state_registry_owner
 id view_tree_view_model_store_owner
 id visible
 id visible_removing_fragment_view_tag
+id waveIndicator
 id west
 id withText
 id with_icon
@@ -3944,9 +3952,11 @@ layout abc_search_dropdown_item_icons_2line
 layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
+layout activity_assistant
 layout activity_main
 layout activity_onboarding
 layout activity_settings
+layout assistant_bottom_sheet
 layout custom_dialog
 layout design_bottom_navigation_item
 layout design_bottom_sheet_dialog
@@ -4891,6 +4901,7 @@ style Theme_Design_Light_BottomSheetDialog
 style Theme_Design_Light_NoActionBar
 style Theme_Design_NoActionBar
 style Theme_Friday
+style Theme_Friday_Assistant
 style Theme_Material3_Dark
 style Theme_Material3_Dark_BottomSheetDialog
 style Theme_Material3_Dark_Dialog

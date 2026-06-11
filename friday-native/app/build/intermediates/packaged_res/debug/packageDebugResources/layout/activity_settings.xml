@@ -539,6 +539,27 @@
                 android:paddingStart="0dp"
                 android:paddingEnd="0dp" />
 
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginTop="@dimen/margin_sm"
+                android:layout_marginBottom="@dimen/margin_sm" />
+
+            <!-- Custom Commands -->
+            <Button
+                android:id="@+id/btnCustomCommands"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:text="Custom Commands"
+                android:textColor="@color/brand_purple"
+                android:background="@drawable/bg_button_ghost"
+                android:textSize="@dimen/text_md"
+                android:gravity="center_vertical|start"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp" />
+
         </LinearLayout>
 
         <!-- ==================== About Section ==================== -->

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.friday.assistant.app-mergeDebugResources-38:/values-hu/values-hu.xml",
+            "outputFile": "com.friday.assistant.app-mergeDebugResources-41:/values-hu/values-hu.xml",
             "map": [
                 {
                     "source": "/home/z/.gradle/caches/8.14.3/transforms/e05c08cb719129d2c01c616774febb39/transformed/core-1.13.0/res/values-hu/values-hu.xml",

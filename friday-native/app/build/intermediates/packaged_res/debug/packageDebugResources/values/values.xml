@@ -189,6 +189,15 @@
         <item name="editTextStyle">@style/Widget.Friday.EditText</item>
         <item name="switchStyle">@style/Widget.Friday.Switch</item>
     </style>
+    <style name="Theme.Friday.Assistant" parent="Theme.Friday">
+        <item name="android:windowBackground">@color/bg_primary</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.InputMethod</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
     <style name="Widget.Friday.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:textColor">@color/white</item>
         <item name="backgroundTint">@color/brand_purple</item>

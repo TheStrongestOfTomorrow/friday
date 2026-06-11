@@ -1,18 +1,26 @@
 [
     {
-        "merged": "com.friday.assistant.app-mergeDebugResources-39:/layout/activity_settings.xml",
-        "source": "com.friday.assistant.app-main-42:/layout/activity_settings.xml"
+        "merged": "com.friday.assistant.app-mergeDebugResources-42:/layout/activity_onboarding.xml",
+        "source": "com.friday.assistant.app-main-45:/layout/activity_onboarding.xml"
     },
     {
-        "merged": "com.friday.assistant.app-mergeDebugResources-39:/layout/activity_onboarding.xml",
-        "source": "com.friday.assistant.app-main-42:/layout/activity_onboarding.xml"
+        "merged": "com.friday.assistant.app-mergeDebugResources-42:/layout/overlay_peek.xml",
+        "source": "com.friday.assistant.app-main-45:/layout/overlay_peek.xml"
     },
     {
-        "merged": "com.friday.assistant.app-mergeDebugResources-39:/layout/overlay_peek.xml",
-        "source": "com.friday.assistant.app-main-42:/layout/overlay_peek.xml"
+        "merged": "com.friday.assistant.app-mergeDebugResources-42:/layout/activity_assistant.xml",
+        "source": "com.friday.assistant.app-main-45:/layout/activity_assistant.xml"
     },
     {
-        "merged": "com.friday.assistant.app-mergeDebugResources-39:/layout/activity_main.xml",
-        "source": "com.friday.assistant.app-main-42:/layout/activity_main.xml"
+        "merged": "com.friday.assistant.app-mergeDebugResources-42:/layout/activity_settings.xml",
+        "source": "com.friday.assistant.app-main-45:/layout/activity_settings.xml"
+    },
+    {
+        "merged": "com.friday.assistant.app-mergeDebugResources-42:/layout/assistant_bottom_sheet.xml",
+        "source": "com.friday.assistant.app-main-45:/layout/assistant_bottom_sheet.xml"
+    },
+    {
+        "merged": "com.friday.assistant.app-mergeDebugResources-42:/layout/activity_main.xml",
+        "source": "com.friday.assistant.app-main-45:/layout/activity_main.xml"
     }
 ]

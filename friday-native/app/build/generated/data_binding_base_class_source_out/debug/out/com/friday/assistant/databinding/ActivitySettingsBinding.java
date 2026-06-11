@@ -28,6 +28,9 @@ public final class ActivitySettingsBinding implements ViewBinding {
   public final ImageButton btnBackSettings;
 
   @NonNull
+  public final Button btnCustomCommands;
+
+  @NonNull
   public final Button btnDisableBattery;
 
   @NonNull
@@ -79,16 +82,18 @@ public final class ActivitySettingsBinding implements ViewBinding {
   public final TextView tvVersion;
 
   private ActivitySettingsBinding(@NonNull ScrollView rootView,
-      @NonNull ImageButton btnBackSettings, @NonNull Button btnDisableBattery,
-      @NonNull Button btnResetSettings, @NonNull Button btnRunOnboarding,
-      @NonNull Button btnSetAssistant, @NonNull Button btnTestVoice, @NonNull EditText etWakeWord,
-      @NonNull SeekBar seekConfidence, @NonNull SeekBar seekTtsPitch, @NonNull SeekBar seekTtsRate,
-      @NonNull Switch switchPeekGui, @NonNull Switch switchStartOnBoot,
-      @NonNull Switch switchStealthMode, @NonNull Switch switchWakeWordEnabled,
-      @NonNull TextView tvConfidenceValue, @NonNull TextView tvTtsPitchValue,
-      @NonNull TextView tvTtsRateValue, @NonNull TextView tvVersion) {
+      @NonNull ImageButton btnBackSettings, @NonNull Button btnCustomCommands,
+      @NonNull Button btnDisableBattery, @NonNull Button btnResetSettings,
+      @NonNull Button btnRunOnboarding, @NonNull Button btnSetAssistant,
+      @NonNull Button btnTestVoice, @NonNull EditText etWakeWord, @NonNull SeekBar seekConfidence,
+      @NonNull SeekBar seekTtsPitch, @NonNull SeekBar seekTtsRate, @NonNull Switch switchPeekGui,
+      @NonNull Switch switchStartOnBoot, @NonNull Switch switchStealthMode,
+      @NonNull Switch switchWakeWordEnabled, @NonNull TextView tvConfidenceValue,
+      @NonNull TextView tvTtsPitchValue, @NonNull TextView tvTtsRateValue,
+      @NonNull TextView tvVersion) {
     this.rootView = rootView;
     this.btnBackSettings = btnBackSettings;
+    this.btnCustomCommands = btnCustomCommands;
     this.btnDisableBattery = btnDisableBattery;
     this.btnResetSettings = btnResetSettings;
     this.btnRunOnboarding = btnRunOnboarding;
@@ -138,6 +143,12 @@ public final class ActivitySettingsBinding implements ViewBinding {
       id = R.id.btnBackSettings;
       ImageButton btnBackSettings = ViewBindings.findChildViewById(rootView, id);
       if (btnBackSettings == null) {
+        break missingId;
+      }
+
+      id = R.id.btnCustomCommands;
+      Button btnCustomCommands = ViewBindings.findChildViewById(rootView, id);
+      if (btnCustomCommands == null) {
         break missingId;
       }
 
@@ -243,9 +254,9 @@ public final class ActivitySettingsBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivitySettingsBinding((ScrollView) rootView, btnBackSettings, btnDisableBattery,
-          btnResetSettings, btnRunOnboarding, btnSetAssistant, btnTestVoice, etWakeWord,
-          seekConfidence, seekTtsPitch, seekTtsRate, switchPeekGui, switchStartOnBoot,
+      return new ActivitySettingsBinding((ScrollView) rootView, btnBackSettings, btnCustomCommands,
+          btnDisableBattery, btnResetSettings, btnRunOnboarding, btnSetAssistant, btnTestVoice,
+          etWakeWord, seekConfidence, seekTtsPitch, seekTtsRate, switchPeekGui, switchStartOnBoot,
           switchStealthMode, switchWakeWordEnabled, tvConfidenceValue, tvTtsPitchValue,
           tvTtsRateValue, tvVersion);
     }

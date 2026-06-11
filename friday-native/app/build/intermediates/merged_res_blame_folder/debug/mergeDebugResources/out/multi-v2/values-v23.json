@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.friday.assistant.app-mergeDebugResources-38:/values-v23/values-v23.xml",
+            "outputFile": "com.friday.assistant.app-mergeDebugResources-41:/values-v23/values-v23.xml",
             "map": [
                 {
                     "source": "/home/z/.gradle/caches/8.14.3/transforms/685077734e408c2b4d019f76f3a89a00/transformed/cardview-1.0.0/res/values-v23/values-v23.xml",
