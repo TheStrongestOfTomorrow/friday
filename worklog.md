@@ -124,3 +124,42 @@ Work Log:
 
 Stage Summary:
 - README pushed to GitHub repo
+
+---
+Task ID: 8
+Agent: Main
+Task: Fix Friday v3.1.0 — Speech recognition not available, assistant picker, bugs, mocks
+
+Work Log:
+- Full audit of all 59 source files identified 21 issues across CRITICAL/MAJOR/MINOR categories
+- Created FridayRecognitionService.java + added recognitionService to voice_interaction.xml
+- Added RecognitionService to AndroidManifest.xml with BIND_VOICE_INTERACTION permission
+- Fixed SpeechRecognizer "not available" error with isRecognitionAvailable() check
+- Added Google app detection (isGoogleAppInstalled) and install/update guidance dialog
+- Added try-catch around SpeechRecognizer.createSpeechRecognizer() for robustness
+- Fixed double-increment bug in OnboardingActivity.finishRecording() with finishRecordingPending guard
+- Replaced stub processCommand() with real built-in commands: time, date, open apps, help
+- Added 30+ app name mappings (Chrome, YouTube, Maps, WhatsApp, etc.)
+- Added Play Store search fallback when app not found locally
+- Wired up switchWakeWordEnabled in SettingsActivity (was dead UI)
+- PeekOverlayService now starts/stops based on preference toggle in both MainActivity and SettingsActivity
+- FridaySession passes from_assistant=true, MainActivity auto-starts listening on assistant activation
+- Foreground service now performs real background wake word monitoring (5s listen / 10s pause)
+- Fixed progress bar width=0 on first render using ViewTreeObserver.OnGlobalLayoutListener
+- Fixed sampleCount not persisted across ViewPager rebinds (reads from PrefsManager)
+- Updated TTSManager to use non-deprecated speak() API with Bundle
+- Updated PermissionHelper to use Manifest.permission constants
+- Added POST_NOTIFICATIONS check before startForeground()
+- Updated feature descriptions to be accurate (removed misleading "Fully Private" claim)
+- Better error messages for all SpeechRecognizer error codes
+- Added battery optimization verification in completion screen
+- Built APK: friday-v3.1.0-native.apk (6.5MB)
+- Pushed to GitHub: TheStrongestOfTomorrow/friday
+- Stored PAT securely at /home/z/my-project/.config/github.pat
+
+Stage Summary:
+- APK: /home/z/my-project/download/friday-v3.1.0-native.apk
+- GitHub: https://github.com/TheStrongestOfTomorrow/friday
+- All 21 identified issues fixed across CRITICAL (4), MAJOR (8), MINOR (9) categories
+- New file: FridayRecognitionService.java (required for assistant picker)
+- Friday should now appear in Android's default assistant selection list
