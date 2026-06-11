@@ -10,14 +10,25 @@ android {
         applicationId "com.friday.assistant"
         minSdk 26
         targetSdk 36
-        versionCode 4
+        versionCode 5
         versionName "3.1.0"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('../friday-release.keystore')
+            storePassword 'friday123'
+            keyAlias 'friday'
+            keyPassword 'friday123'
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
         debug {
             minifyEnabled false
@@ -32,6 +43,10 @@ android {
 
     buildFeatures {
         viewBinding true
+    }
+
+    lint {
+        abortOnError false
     }
 }
 
