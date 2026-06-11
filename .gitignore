@@ -1,2 +1,31 @@
+# Skills
 skills/
 node_modules/
+
+# Android
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Android build outputs
+friday-native/app/build/
+friday-native/build/
+
+# Keystore files (never commit these)
+*.jks
+*.keystore
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# IDE
+.idea/
+*.iml

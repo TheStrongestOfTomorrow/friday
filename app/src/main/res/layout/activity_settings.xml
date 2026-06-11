@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/margin_md">
+
+        <!-- Toolbar / Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/margin_md">
+
+            <ImageButton
+                android:id="@+id/btnBackSettings"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="Back"
+                android:background="@drawable/bg_button_ghost"
+                android:padding="8dp"
+                android:tint="@color/text_secondary" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/margin_sm"
+                android:text="@string/title_settings"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_xl"
+                android:fontFamily="sans-serif-medium" />
+
+        </LinearLayout>
+
+        <!-- ==================== General Section ==================== -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_sm"
+            android:layout_marginBottom="@dimen/margin_sm"
+            android:text="General"
+            android:textColor="@color/text_muted"
+            android:textSize="@dimen/text_sm"
+            android:textAllCaps="true"
+            android:letterSpacing="0.08" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="@dimen/margin_md">
+
+            <!-- Version display -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingTop="@dimen/margin_sm"
+                android:paddingBottom="@dimen/margin_sm">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_version"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_md" />
+
+                <TextView
+                    android:id="@+id/tvVersion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3.0.0"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_sm" />
+
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginTop="@dimen/margin_sm"
+                android:layout_marginBottom="@dimen/margin_sm" />
+
+            <!-- Run Onboarding Again -->
+            <Button
+                android:id="@+id/btnRunOnboarding"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:text="@string/settings_run_onboarding"
+                android:textColor="@color/brand_purple"
+                android:background="@drawable/bg_button_ghost"
+                android:textSize="@dimen/text_md"
+                android:gravity="center_vertical|start"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginTop="@dimen/margin_sm"
+                android:layout_marginBottom="@dimen/margin_sm" />
+
+            <!-- Reset All Settings -->
+            <Button
+                android:id="@+id/btnResetSettings"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:text="@string/settings_reset"
+                android:textColor="@color/danger_red"
+                android:background="@drawable/bg_button_danger"
+                android:textSize="@dimen/text_md"
+                android:gravity="center_vertical|start"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp" />
+
+        </LinearLayout>
+
+        <!-- ==================== Wake Word Section ==================== -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_lg"
+            android:layout_marginBottom="@dimen/margin_sm"
+            android:text="@string/settings_wake_word"
+            android:textColor="@color/text_muted"
+            android:textSize="@dimen/text_sm"
+            android:textAllCaps="true"
+            android:letterSpacing="0.08" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="@dimen/margin_md">
+
+            <!-- Wake Word EditText -->
+            <EditText
+                android:id="@+id/etWakeWord"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:background="@drawable/bg_input"
+                android:hint="@string/settings_wake_word"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_muted"
+                android:textSize="@dimen/text_md"
+                android:paddingStart="@dimen/margin_md"
+                android:paddingEnd="@dimen/margin_md"
+                android:singleLine="true"
+                android:inputType="text"
+                android:layout_marginBottom="@dimen/margin_sm" />
+
+            <!-- Wake Word Enabled Switch -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingTop="@dimen/margin_sm"
+                android:paddingBottom="@dimen/margin_sm">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_wake_word"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_md" />
+
+                <Switch
+                    android:id="@+id/switchWakeWordEnabled"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:thumbTint="@color/brand_purple"
+                    android:trackTint="@color/text_muted" />
+
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginTop="@dimen/margin_sm"
+                android:layout_marginBottom="@dimen/margin_sm" />
+
+            <!-- Confidence Threshold SeekBar -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Confidence Threshold"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_md"
+                android:paddingBottom="@dimen/margin_sm" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <SeekBar
+                    android:id="@+id/seekConfidence"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:min="50"
+                    android:max="90"
+                    android:progress="70"
+                    android:progressTint="@color/brand_purple"
+                    android:thumbTint="@color/brand_purple" />
+
+                <TextView
+                    android:id="@+id/tvConfidenceValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_sm"
+                    android:text="70%"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_sm"
+                    android:minWidth="40dp"
+                    android:gravity="end" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- ==================== Audio Section ==================== -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_lg"
+            android:layout_marginBottom="@dimen/margin_sm"
+            android:text="Audio"
+            android:textColor="@color/text_muted"
+            android:textSize="@dimen/text_sm"
+            android:textAllCaps="true"
+            android:letterSpacing="0.08" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="@dimen/margin_md">
+
+            <!-- TTS Rate -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_tts_rate"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_md"
+                android:paddingBottom="@dimen/margin_sm" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <SeekBar
+                    android:id="@+id/seekTtsRate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:min="5"
+                    android:max="20"
+                    android:progress="10"
+                    android:progressTint="@color/brand_purple"
+                    android:thumbTint="@color/brand_purple" />
+
+                <TextView
+                    android:id="@+id/tvTtsRateValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_sm"
+                    android:text="1.0x"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_sm"
+                    android:minWidth="40dp"
+                    android:gravity="end" />
+
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginTop="@dimen/margin_md"
+                android:layout_marginBottom="@dimen/margin_md" />
+
+            <!-- TTS Pitch -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_tts_pitch"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_md"
+                android:paddingBottom="@dimen/margin_sm" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <SeekBar
+                    android:id="@+id/seekTtsPitch"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:min="5"
+                    android:max="20"
+                    android:progress="10"
+                    android:progressTint="@color/brand_purple"
+                    android:thumbTint="@color/brand_purple" />
+
+                <TextView
+                    android:id="@+id/tvTtsPitchValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_sm"
+                    android:text="1.0x"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_sm"
+                    android:minWidth="40dp"
+                    android:gravity="end" />
+
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginTop="@dimen/margin_md"
+                android:layout_marginBottom="@dimen/margin_md" />
+
+            <!-- Test Voice Button -->
+            <Button
+                android:id="@+id/btnTestVoice"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:text="@string/onboard_test_voice"
+                android:textColor="@color/text_primary"
+                android:background="@drawable/bg_button_primary"
+                android:textSize="@dimen/text_md" />
+
+        </LinearLayout>
+
+        <!-- ==================== Display Section ==================== -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_lg"
+            android:layout_marginBottom="@dimen/margin_sm"
+            android:text="Display"
+            android:textColor="@color/text_muted"
+            android:textSize="@dimen/text_sm"
+            android:textAllCaps="true"
+            android:letterSpacing="0.08" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="@dimen/margin_md">
+
+            <!-- Peek GUI Switch -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingTop="@dimen/margin_sm"
+                android:paddingBottom="@dimen/margin_sm">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_peek_gui"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_md" />
+
+                <Switch
+                    android:id="@+id/switchPeekGui"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:thumbTint="@color/brand_purple"
+                    android:trackTint="@color/text_muted" />
+
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginTop="@dimen/margin_sm"
+                android:layout_marginBottom="@dimen/margin_sm" />
+
+            <!-- Stealth Mode Switch -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingTop="@dimen/margin_sm"
+                android:paddingBottom="@dimen/margin_sm">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_stealth_mode"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_md" />
+
+                <Switch
+                    android:id="@+id/switchStealthMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:thumbTint="@color/brand_purple"
+                    android:trackTint="@color/text_muted" />
+
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginTop="@dimen/margin_sm"
+                android:layout_marginBottom="@dimen/margin_sm" />
+
+            <!-- Start on Boot Switch -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingTop="@dimen/margin_sm"
+                android:paddingBottom="@dimen/margin_sm">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_start_on_boot"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_md" />
+
+                <Switch
+                    android:id="@+id/switchStartOnBoot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:thumbTint="@color/brand_purple"
+                    android:trackTint="@color/text_muted" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- ==================== System Section ==================== -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_lg"
+            android:layout_marginBottom="@dimen/margin_sm"
+            android:text="System"
+            android:textColor="@color/text_muted"
+            android:textSize="@dimen/text_sm"
+            android:textAllCaps="true"
+            android:letterSpacing="0.08" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="@dimen/margin_md">
+
+            <!-- Set as Default Assistant -->
+            <Button
+                android:id="@+id/btnSetAssistant"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:text="@string/settings_assistant"
+                android:textColor="@color/brand_purple"
+                android:background="@drawable/bg_button_ghost"
+                android:textSize="@dimen/text_md"
+                android:gravity="center_vertical|start"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginTop="@dimen/margin_sm"
+                android:layout_marginBottom="@dimen/margin_sm" />
+
+            <!-- Disable Battery Optimization -->
+            <Button
+                android:id="@+id/btnDisableBattery"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:text="@string/settings_battery_opt"
+                android:textColor="@color/brand_purple"
+                android:background="@drawable/bg_button_ghost"
+                android:textSize="@dimen/text_md"
+                android:gravity="center_vertical|start"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp" />
+
+        </LinearLayout>
+
+        <!-- ==================== About Section ==================== -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_lg"
+            android:layout_marginBottom="@dimen/margin_sm"
+            android:text="@string/settings_about"
+            android:textColor="@color/text_muted"
+            android:textSize="@dimen/text_sm"
+            android:textAllCaps="true"
+            android:letterSpacing="0.08" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="@dimen/margin_md"
+            android:gravity="center">
+
+            <!-- App illustration circle -->
+            <View
+                android:layout_width="@dimen/illustration_size"
+                android:layout_height="@dimen/illustration_size"
+                android:background="@drawable/bg_illustration_circle"
+                android:layout_marginBottom="@dimen/margin_md" />
+
+            <!-- App name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_xl"
+                android:fontFamily="sans-serif-medium" />
+
+            <!-- Version -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Version 3.0.0"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/text_sm" />
+
+            <!-- Credits -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_md"
+                android:text="Built with ❤ for hands-free convenience"
+                android:textColor="@color/text_muted"
+                android:textSize="@dimen/text_sm"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Bottom padding -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_xl" />
+
+    </LinearLayout>
+
+</ScrollView>
