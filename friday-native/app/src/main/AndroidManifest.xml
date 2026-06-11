@@ -73,6 +73,19 @@
             android:exported="true"
             android:permission="android.permission.BIND_VOICE_INTERACTION" />
 
+        <!-- Recognition Service — REQUIRED for assistant picker on Android 13+ -->
+        <service
+            android:name=".service.FridayRecognitionService"
+            android:exported="true"
+            android:permission="android.permission.BIND_VOICE_INTERACTION">
+            <intent-filter>
+                <action android:name="android.speech.RecognitionService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.speech"
+                android:resource="@xml/voice_interaction" />
+        </service>
+
         <!-- Foreground Service -->
         <service
             android:name=".service.FridayForegroundService"

@@ -1,5 +1,6 @@
 package com.friday.assistant.core;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
@@ -13,11 +14,11 @@ import androidx.core.content.ContextCompat;
  */
 public class PermissionHelper {
 
-    // All permissions Friday needs
+    // All permissions Friday needs — using Manifest.permission constants
     public static final String[] ALL_PERMISSIONS = {
-            "android.permission.RECORD_AUDIO",
-            "android.permission.POST_NOTIFICATIONS",
-            "android.permission.READ_CONTACTS",
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.POST_NOTIFICATIONS,
+            Manifest.permission.READ_CONTACTS,
     };
 
     /**
@@ -59,6 +60,13 @@ public class PermissionHelper {
             return pm != null && pm.isIgnoringBatteryOptimizations(context.getPackageName());
         }
         return true; // Pre-M doesn't have battery optimization
+    }
+
+    /**
+     * Check if the microphone permission specifically is granted.
+     */
+    public static boolean isMicGranted(Context context) {
+        return isGranted(context, Manifest.permission.RECORD_AUDIO);
     }
 
     /**

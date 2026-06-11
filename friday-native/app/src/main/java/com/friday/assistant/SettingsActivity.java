@@ -24,7 +24,8 @@ import com.friday.assistant.core.FridaySpeechRecognizer;
 import com.friday.assistant.core.PrefsManager;
 import com.friday.assistant.core.PermissionHelper;
 import com.friday.assistant.core.TTSManager;
-import com.friday.assistant.core.WakeWordEngine;
+import com.friday.assistant.service.FridayForegroundService;
+import com.friday.assistant.service.PeekOverlayService;
 
 /**
  * Friday — Settings Activity
@@ -57,7 +58,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // ─── General ───────────────────────────────────────────
         TextView tvVersion = findViewById(R.id.tvVersion);
-        tvVersion.setText("v3.0.0");
+        tvVersion.setText("v3.1.0");
 
         Button btnRunOnboarding = findViewById(R.id.btnRunOnboarding);
         btnRunOnboarding.setOnClickListener(v -> {
@@ -88,6 +89,30 @@ public class SettingsActivity extends AppCompatActivity {
             if (!hasFocus) {
                 prefs.setWakeWord(etWakeWord.getText().toString().trim());
             }
+        });
+        // Also save on action done
+        etWakeWord.setOnEditorActionListener((v, actionId, event) -> {
+            prefs.setWakeWord(etWakeWord.getText().toString().trim());
+            return false;
+        });
+
+        // Wire up the Wake Word Enabled switch (was previously dead UI)
+        Switch switchWakeWordEnabled = findViewById(R.id.switchWakeWordEnabled);
+        switchWakeWordEnabled.setChecked(prefs.isWakeWordEnabled());
+        switchWakeWordEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefs.setWakeWordEnabled(isChecked);
+
+            // Update the foreground service monitoring state
+            Intent serviceIntent = new Intent(this, FridayForegroundService.class);
+            if (isChecked) {
+                serviceIntent.setAction("START_MONITORING");
+            } else {
+                serviceIntent.setAction("STOP_MONITORING");
+            }
+            startService(serviceIntent);
+
+            Toast.makeText(this, isChecked ? "Wake word detection enabled" : "Wake word detection disabled",
+                    Toast.LENGTH_SHORT).show();
         });
 
         SeekBar seekConfidence = findViewById(R.id.seekConfidence);
@@ -146,12 +171,42 @@ public class SettingsActivity extends AppCompatActivity {
         switchPeekGui.setChecked(prefs.isPeekGuiEnabled());
         switchPeekGui.setOnCheckedChangeListener((buttonView, isChecked) -> {
             prefs.setPeekGuiEnabled(isChecked);
+
+            // Actually start/stop the Peek overlay service
+            if (isChecked && !prefs.isStealthMode()) {
+                Intent intent = new Intent(this, PeekOverlayService.class);
+                intent.setAction("SHOW");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(intent);
+                } else {
+                    startService(intent);
+                }
+            } else {
+                Intent intent = new Intent(this, PeekOverlayService.class);
+                intent.setAction("HIDE");
+                startService(intent);
+            }
         });
 
         Switch switchStealthMode = findViewById(R.id.switchStealthMode);
         switchStealthMode.setChecked(prefs.isStealthMode());
         switchStealthMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
             prefs.setStealthMode(isChecked);
+
+            // If stealth mode enabled, hide overlay
+            if (isChecked) {
+                Intent intent = new Intent(this, PeekOverlayService.class);
+                intent.setAction("HIDE");
+                startService(intent);
+            } else if (prefs.isPeekGuiEnabled()) {
+                Intent intent = new Intent(this, PeekOverlayService.class);
+                intent.setAction("SHOW");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(intent);
+                } else {
+                    startService(intent);
+                }
+            }
         });
 
         Switch switchStartOnBoot = findViewById(R.id.switchStartOnBoot);
@@ -200,6 +255,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void applySettingsToUI() {
         EditText etWakeWord = findViewById(R.id.etWakeWord);
+        Switch switchWakeWordEnabled = findViewById(R.id.switchWakeWordEnabled);
         SeekBar seekConfidence = findViewById(R.id.seekConfidence);
         SeekBar seekTtsRate = findViewById(R.id.seekTtsRate);
         SeekBar seekTtsPitch = findViewById(R.id.seekTtsPitch);
@@ -208,6 +264,7 @@ public class SettingsActivity extends AppCompatActivity {
         Switch switchStartOnBoot = findViewById(R.id.switchStartOnBoot);
 
         etWakeWord.setText(prefs.getWakeWord());
+        switchWakeWordEnabled.setChecked(prefs.isWakeWordEnabled());
         seekConfidence.setProgress((int) (prefs.getConfidenceThreshold() * 100));
         seekTtsRate.setProgress((int) (prefs.getTtsRate() * 10));
         seekTtsPitch.setProgress((int) (prefs.getTtsPitch() * 10));

@@ -2,6 +2,8 @@ package com.friday.assistant.core;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -17,6 +19,11 @@ import java.util.Locale;
  * Wraps Android's native SpeechRecognizer with the Shush Protocol:
  *   - startListening() auto-ducks audio via AudioFocusManager
  *   - On completion/error, audio is automatically resumed
+ *
+ * Handles the "Speech recognition not available" error by:
+ *   1. Checking isRecognitionAvailable() before creating the recognizer
+ *   2. Providing a helper method to detect if Google app is installed
+ *   3. Offering to open Google Play to install the Google app
  *
  * No mocks. Uses real Android SpeechRecognizer API.
  */
@@ -38,6 +45,7 @@ public class FridaySpeechRecognizer {
     private final AudioFocusManager audioFocusManager;
     private SpeechCallback callback;
     private boolean isListening = false;
+    private boolean finishRecordingCalled = false;
 
     public FridaySpeechRecognizer(Context context, AudioFocusManager audioFocusManager) {
         this.context = context;
@@ -53,14 +61,48 @@ public class FridaySpeechRecognizer {
 
     /**
      * Check if speech recognition is available on this device.
+     * This checks the Android SpeechRecognizer.isRecognitionAvailable() API.
      */
     public boolean isAvailable() {
         return SpeechRecognizer.isRecognitionAvailable(context);
     }
 
     /**
+     * Check if the Google app (which provides the speech recognition service)
+     * is installed on this device. The Google app is required for
+     * SpeechRecognizer to work on most Android devices.
+     */
+    public static boolean isGoogleAppInstalled(Context ctx) {
+        try {
+            ctx.getPackageManager().getPackageInfo("com.google.android.googlequicksearchbox", 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Get an intent to open the Google app on Google Play Store.
+     * Used when speech recognition is not available because the
+     * Google app is not installed.
+     */
+    public static Intent getGoogleAppInstallIntent(Context ctx) {
+        try {
+            return new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=com.google.android.googlequicksearchbox"));
+        } catch (Exception e) {
+            // Fallback to browser URL
+            return new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.googlequicksearchbox"));
+        }
+    }
+
+    /**
      * Start listening with the Shush Protocol.
      * Audio is automatically ducked before listening begins.
+     *
+     * If speech recognition is not available, calls onError with
+     * a descriptive message and GOOGLE_APP_MISSING error code.
      */
     public void startListening() {
         if (isListening) {
@@ -68,21 +110,56 @@ public class FridaySpeechRecognizer {
             return;
         }
 
+        finishRecordingCalled = false;
+
+        // Check if speech recognition is available on this device
         if (!isAvailable()) {
+            String message;
+            if (!isGoogleAppInstalled(context)) {
+                message = "Speech recognition requires the Google app. Please install it from the Play Store.";
+            } else {
+                message = "Speech recognition is not available on this device. Try restarting your device.";
+            }
+            Log.e(TAG, message);
+
             if (callback != null) {
-                callback.onError("Speech recognition not available on this device", -1);
+                callback.onError(message, ERROR_RECOGNIZER_UNAVAILABLE);
+            }
+            return;
+        }
+
+        // Try to create the SpeechRecognizer — this can fail if the
+        // recognizer service is not properly configured
+        try {
+            // Destroy any existing recognizer
+            destroyRecognizer();
+
+            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
+            if (speechRecognizer == null) {
+                Log.e(TAG, "createSpeechRecognizer returned null");
+                if (callback != null) {
+                    callback.onError("Could not create speech recognizer. Please ensure the Google app is installed and updated.", ERROR_RECOGNIZER_UNAVAILABLE);
+                }
+                return;
+            }
+
+            speechRecognizer.setRecognitionListener(new FridayRecognitionListener());
+        } catch (SecurityException e) {
+            Log.e(TAG, "SecurityException creating SpeechRecognizer", e);
+            if (callback != null) {
+                callback.onError("Microphone permission is required for speech recognition.", SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS);
+            }
+            return;
+        } catch (Exception e) {
+            Log.e(TAG, "Exception creating SpeechRecognizer", e);
+            if (callback != null) {
+                callback.onError("Speech recognition failed to start: " + e.getMessage(), ERROR_RECOGNIZER_UNAVAILABLE);
             }
             return;
         }
 
         // Shush Protocol: duck audio first
         audioFocusManager.duckAudio();
-
-        // Destroy any existing recognizer
-        destroyRecognizer();
-
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
-        speechRecognizer.setRecognitionListener(new FridayRecognitionListener());
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -93,12 +170,28 @@ public class FridaySpeechRecognizer {
         intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 3000L);
         intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 2000L);
 
-        speechRecognizer.startListening(intent);
-        isListening = true;
-        Log.d(TAG, "Started listening (Shush Protocol active)");
+        try {
+            speechRecognizer.startListening(intent);
+            isListening = true;
+            Log.d(TAG, "Started listening (Shush Protocol active)");
 
-        if (callback != null) {
-            callback.onListeningStart();
+            if (callback != null) {
+                callback.onListeningStart();
+            }
+        } catch (SecurityException e) {
+            Log.e(TAG, "SecurityException starting listening", e);
+            isListening = false;
+            audioFocusManager.resumeAudio();
+            if (callback != null) {
+                callback.onError("Microphone permission is required for speech recognition.", SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Exception starting listening", e);
+            isListening = false;
+            audioFocusManager.resumeAudio();
+            if (callback != null) {
+                callback.onError("Failed to start listening: " + e.getMessage(), ERROR_RECOGNIZER_UNAVAILABLE);
+            }
         }
     }
 
@@ -167,6 +260,27 @@ public class FridaySpeechRecognizer {
         return isListening;
     }
 
+    /**
+     * Mark that finishRecording has been called (used to prevent double-increment).
+     */
+    public void setFinishRecordingCalled() {
+        finishRecordingCalled = true;
+    }
+
+    public boolean isFinishRecordingCalled() {
+        return finishRecordingCalled;
+    }
+
+    /**
+     * Reset the finishRecording flag. Called when starting a new recording.
+     */
+    public void resetFinishRecordingCalled() {
+        finishRecordingCalled = false;
+    }
+
+    // Custom error codes
+    public static final int ERROR_RECOGNIZER_UNAVAILABLE = 100;
+
     // ─── Recognition Listener Implementation ───────────────────
 
     private class FridayRecognitionListener implements RecognitionListener {
@@ -211,34 +325,34 @@ public class FridaySpeechRecognizer {
             String message;
             switch (error) {
                 case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
-                    message = "Network timeout";
+                    message = "Network timeout — check your internet connection";
                     break;
                 case SpeechRecognizer.ERROR_NETWORK:
-                    message = "Network error";
+                    message = "Network error — check your internet connection";
                     break;
                 case SpeechRecognizer.ERROR_AUDIO:
-                    message = "Audio recording error";
+                    message = "Audio recording error — try again";
                     break;
                 case SpeechRecognizer.ERROR_SERVER:
-                    message = "Server error";
+                    message = "Server error — try again in a moment";
                     break;
                 case SpeechRecognizer.ERROR_CLIENT:
-                    message = "Client error";
+                    message = "Client error — try restarting the app";
                     break;
                 case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
-                    message = "No speech detected";
+                    message = "No speech detected — try speaking louder or moving closer to the mic";
                     break;
                 case SpeechRecognizer.ERROR_NO_MATCH:
-                    message = "No match found";
+                    message = "Could not understand — please try again";
                     break;
                 case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
-                    message = "Recognizer busy";
+                    message = "Recognizer is busy — wait a moment and try again";
                     break;
                 case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
-                    message = "Insufficient permissions — please grant microphone access";
+                    message = "Microphone permission required — please grant microphone access";
                     break;
                 default:
-                    message = "Unknown error (" + error + ")";
+                    message = "Speech recognition error (code: " + error + ")";
                     break;
             }
 

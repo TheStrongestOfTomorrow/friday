@@ -9,15 +9,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +23,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -72,6 +71,9 @@ public class OnboardingActivity extends AppCompatActivity {
     private boolean assistantConfigured = false;
     private boolean batteryOptimized = false;
 
+    // Guard against double-increment in finishRecording
+    private boolean finishRecordingPending = false;
+
     // Permission launcher
     private final ActivityResultLauncher<String[]> permissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(),
@@ -106,6 +108,9 @@ public class OnboardingActivity extends AppCompatActivity {
         ttsManager = new TTSManager(this);
         audioFocusManager = new AudioFocusManager(this);
         speechRecognizer = new FridaySpeechRecognizer(this, audioFocusManager);
+
+        // Restore sample count from prefs
+        sampleCount = prefs.getWakeWordSamples();
 
         // Bind views
         viewPager = findViewById(R.id.viewPager);
@@ -152,7 +157,18 @@ public class OnboardingActivity extends AppCompatActivity {
 
         // Initial state
         updateNavButtons(0);
-        updateProgress(0);
+
+        // Fix progress bar width = 0 on first render
+        // Use ViewTreeObserver to wait for layout to be measured
+        findViewById(R.id.progressContainer).getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        updateProgress(0);
+                        findViewById(R.id.progressContainer).getViewTreeObserver()
+                                .removeOnGlobalLayoutListener(this);
+                    }
+                });
     }
 
     @Override
@@ -180,8 +196,13 @@ public class OnboardingActivity extends AppCompatActivity {
     private void updateProgress(int position) {
         int pct = ((position + 1) * 100) / TOTAL_SCREENS;
         ViewGroup.LayoutParams lp = progressFill.getLayoutParams();
-        lp.width = (int) (findViewById(R.id.progressContainer).getWidth() * pct / 100f);
-        progressFill.setLayoutParams(lp);
+
+        View progressContainer = findViewById(R.id.progressContainer);
+        int containerWidth = progressContainer.getWidth();
+        if (containerWidth > 0) {
+            lp.width = (int) (containerWidth * pct / 100f);
+            progressFill.setLayoutParams(lp);
+        }
     }
 
     private void goToScreen(int index) {
@@ -221,8 +242,12 @@ public class OnboardingActivity extends AppCompatActivity {
         prefs.setTtsPitch(onboardingTtsPitch);
         prefs.setPeekGuiEnabled(peekEnabled);
         prefs.setStealthMode(stealthMode);
-        prefs.setAssistantConfigured(assistantConfigured);
-        prefs.setBatteryOptimized(batteryOptimized);
+
+        // Verify battery optimization status instead of blindly setting it
+        prefs.setBatteryOptimized(PermissionHelper.isBatteryOptimizationDisabled(this));
+
+        // Don't assume assistant was configured — user has to do it manually
+        // We set it optimistically but the completion screen will show the real status
 
         // Navigate to main
         startActivity(new Intent(this, MainActivity.class));
@@ -293,19 +318,15 @@ public class OnboardingActivity extends AppCompatActivity {
     // ─── Screen 1: Welcome ─────────────────────────────────────
 
     private void buildWelcomeScreen(LinearLayout root) {
-        // Illustration circle
         addIllustrationCircle(root, "\uD83E\uDD16");
 
-        // Title
         addTitle(root, getString(R.string.onboard_welcome_title));
-
-        // Subtitle
         addSubtitle(root, getString(R.string.onboard_welcome_subtitle));
 
-        // Feature list
-        addFeatureItem(root, "Always Listening", "Wake word activation, hands-free");
-        addFeatureItem(root, "Fully Private", "All processing stays on your device");
-        addFeatureItem(root, "Macro Engine", "Automate anything with voice commands");
+        // Feature list — updated descriptions to be accurate
+        addFeatureItem(root, "Voice Activated", "Wake word detection and voice commands");
+        addFeatureItem(root, "Smart Commands", "Time, date, open apps, and more");
+        addFeatureItem(root, "Audio Control", "Automatic ducking when Friday listens");
         addFeatureItem(root, "Peek GUI", "Minimal overlay, maximum control");
     }
 
@@ -347,12 +368,24 @@ public class OnboardingActivity extends AppCompatActivity {
         addTitle(root, getString(R.string.onboard_assistant_title));
         addSubtitle(root, getString(R.string.onboard_assistant_subtitle));
 
+        // Status indicator
+        TextView assistantStatus = new TextView(this);
+        assistantStatus.setText("Friday needs to be set as your default assistant");
+        assistantStatus.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
+        assistantStatus.setTextSize(13);
+        assistantStatus.setGravity(android.view.Gravity.CENTER);
+        LinearLayout.LayoutParams statusLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        statusLp.topMargin = 16;
+        root.addView(assistantStatus, statusLp);
+
         Button setAssistantBtn = addPrimaryButton(root, "Set as Default Assistant");
         setAssistantBtn.setOnClickListener(v -> {
             try {
                 Intent intent = new Intent(Settings.ACTION_VOICE_INPUT_SETTINGS);
                 startActivity(intent);
-                assistantConfigured = true;
+                // Don't blindly set to true — user might not actually set it
+                // We check on the completion screen
                 Toast.makeText(this, "Set Friday as your assistant in Settings", Toast.LENGTH_LONG).show();
             } catch (Exception e) {
                 Log.e(TAG, "Cannot open assistant settings", e);
@@ -394,16 +427,26 @@ public class OnboardingActivity extends AppCompatActivity {
             LinearLayout.MarginLayoutParams dotLp = new LinearLayout.MarginLayoutParams(size, size);
             dotLp.setMargins(8, 0, 8, 0);
             dot.setLayoutParams(dotLp);
-            dot.setBackground(ContextCompat.getDrawable(this, R.drawable.bg_sample_dot));
+            // Restore dot state from persisted sample count
+            if (i < sampleCount) {
+                dot.setBackground(ContextCompat.getDrawable(this, R.drawable.bg_sample_dot_filled));
+            } else {
+                dot.setBackground(ContextCompat.getDrawable(this, R.drawable.bg_sample_dot));
+            }
             dotsRow.addView(dot);
             dots.add(dot);
         }
         root.addView(dotsRow);
 
-        // Sample counter text
+        // Sample counter text — restore from persisted count
         TextView sampleText = new TextView(this);
-        sampleText.setText("Sample 0 of " + REQUIRED_SAMPLES);
-        sampleText.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
+        sampleText.setText("Sample " + sampleCount + " of " + REQUIRED_SAMPLES);
+        if (sampleCount >= REQUIRED_SAMPLES) {
+            sampleText.setText("All " + REQUIRED_SAMPLES + " samples captured!");
+            sampleText.setTextColor(ContextCompat.getColor(this, R.color.success_green));
+        } else {
+            sampleText.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
+        }
         sampleText.setTextSize(13);
         sampleText.setGravity(android.view.Gravity.CENTER);
         LinearLayout.LayoutParams textLp = new LinearLayout.LayoutParams(
@@ -411,7 +454,15 @@ public class OnboardingActivity extends AppCompatActivity {
         root.addView(sampleText, textLp);
 
         // Record button
-        Button recordBtn = addPrimaryButton(root, "Record Sample");
+        Button recordBtn = addPrimaryButton(root,
+                sampleCount >= REQUIRED_SAMPLES ? "Training Complete!" : "Record Sample");
+        if (sampleCount >= REQUIRED_SAMPLES) {
+            recordBtn.setEnabled(false);
+            recordBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.bg_button_primary));
+        } else if (sampleCount > 0) {
+            recordBtn.setText("Record Sample (" + sampleCount + "/" + REQUIRED_SAMPLES + ")");
+        }
+
         recordBtn.setOnClickListener(v -> {
             if (sampleCount >= REQUIRED_SAMPLES) return;
 
@@ -421,43 +472,60 @@ public class OnboardingActivity extends AppCompatActivity {
                 prefs.setWakeWord(wakeWord);
             }
 
-            // Simulate recording (in production this would use real audio capture)
+            // Check mic permission
+            if (!PermissionHelper.isGranted(this, Manifest.permission.RECORD_AUDIO)) {
+                permissionLauncher.launch(new String[]{Manifest.permission.RECORD_AUDIO});
+                return;
+            }
+
+            // Check speech availability
+            if (!speechRecognizer.isAvailable()) {
+                Toast.makeText(this, "Speech recognition not available. Please install the Google app.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             recordBtn.setEnabled(false);
             recordBtn.setText("Recording...");
+            finishRecordingPending = false;
 
-            // If mic permission granted, actually listen briefly
-            if (PermissionHelper.isGranted(this, Manifest.permission.RECORD_AUDIO)) {
-                speechRecognizer.setCallback(new FridaySpeechRecognizer.SpeechCallback() {
-                    @Override public void onPartialResult(String text) {}
-                    @Override public void onRmsChanged(float rmsdB) {}
-                    @Override public void onListeningStart() {}
-                    @Override public void onListeningEnd() {}
+            // Real speech recognition listening
+            speechRecognizer.setCallback(new FridaySpeechRecognizer.SpeechCallback() {
+                @Override public void onPartialResult(String text) {}
+                @Override public void onRmsChanged(float rmsdB) {}
+                @Override public void onListeningStart() {}
+                @Override public void onListeningEnd() {}
 
-                    @Override
-                    public void onFinalResult(String text) {
+                @Override
+                public void onFinalResult(String text) {
+                    // Guard against double-increment
+                    if (!finishRecordingPending) {
+                        finishRecordingPending = true;
                         runOnUiThread(() -> finishRecording(recordBtn, sampleText, dots));
                     }
+                }
 
-                    @Override
-                    public void onError(String message, int errorCode) {
+                @Override
+                public void onError(String message, int errorCode) {
+                    // Still count the sample even on error (the user spoke, just wasn't recognized)
+                    if (!finishRecordingPending) {
+                        finishRecordingPending = true;
                         runOnUiThread(() -> finishRecording(recordBtn, sampleText, dots));
                     }
-                });
-                speechRecognizer.startListening();
+                }
+            });
+            speechRecognizer.startListening();
 
-                // Auto-stop after 2 seconds
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    if (speechRecognizer.isListening()) {
-                        speechRecognizer.stopListening();
-                    }
+            // Auto-stop after 2 seconds
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                if (speechRecognizer.isListening()) {
+                    speechRecognizer.stopListening();
+                }
+                // Only call finishRecording from here if the callback hasn't fired yet
+                if (!finishRecordingPending) {
+                    finishRecordingPending = true;
                     finishRecording(recordBtn, sampleText, dots);
-                }, 2000);
-            } else {
-                // No mic permission — simulate
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    finishRecording(recordBtn, sampleText, dots);
-                }, 1500);
-            }
+                }
+            }, 2000);
         });
     }
 
@@ -492,9 +560,17 @@ public class OnboardingActivity extends AppCompatActivity {
         addTitle(root, getString(R.string.onboard_audio_test_title));
         addSubtitle(root, "Say your wake word one more time to verify recognition.");
 
+        // Check if speech recognition is available
+        boolean speechAvailable = speechRecognizer.isAvailable();
+
         TextView testStatus = new TextView(this);
-        testStatus.setText("Tap to start listening");
-        testStatus.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
+        if (!speechAvailable) {
+            testStatus.setText("Speech recognition not available. Install the Google app to test.");
+            testStatus.setTextColor(ContextCompat.getColor(this, R.color.warning_amber));
+        } else {
+            testStatus.setText("Tap to start listening");
+            testStatus.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
+        }
         testStatus.setTextSize(15);
         testStatus.setGravity(android.view.Gravity.CENTER);
         LinearLayout.LayoutParams statusLp = new LinearLayout.LayoutParams(
@@ -502,7 +578,12 @@ public class OnboardingActivity extends AppCompatActivity {
         statusLp.topMargin = 24;
         root.addView(testStatus, statusLp);
 
-        Button testBtn = addPrimaryButton(root, "Start Listening");
+        Button testBtn = addPrimaryButton(root, speechAvailable ? "Start Listening" : "Skip Test");
+        if (!speechAvailable) {
+            testBtn.setOnClickListener(v -> goToScreen(5));
+            return;
+        }
+
         testBtn.setOnClickListener(v -> {
             if (!PermissionHelper.isGranted(this, Manifest.permission.RECORD_AUDIO)) {
                 permissionLauncher.launch(new String[]{Manifest.permission.RECORD_AUDIO});
@@ -549,7 +630,11 @@ public class OnboardingActivity extends AppCompatActivity {
                 @Override
                 public void onError(String message, int errorCode) {
                     runOnUiThread(() -> {
-                        testStatus.setText("Error: " + message);
+                        if (errorCode == FridaySpeechRecognizer.ERROR_RECOGNIZER_UNAVAILABLE) {
+                            testStatus.setText("Speech recognition unavailable. You can skip this step.");
+                        } else {
+                            testStatus.setText("Error: " + message);
+                        }
                         testStatus.setTextColor(ContextCompat.getColor(OnboardingActivity.this, R.color.danger_red));
                         testBtn.setEnabled(true);
                         testBtn.setText("Try Again");
@@ -696,12 +781,12 @@ public class OnboardingActivity extends AppCompatActivity {
         root.addView(peekDemo, peekLp);
 
         // Peek toggle
-        peekEnabled = true;
+        peekEnabled = prefs.isPeekGuiEnabled();
         addToggleRow(root, "Enable Peek GUI", "Show the floating overlay when active", peekEnabled,
                 checked -> peekEnabled = checked);
 
         // Stealth toggle
-        stealthMode = false;
+        stealthMode = prefs.isStealthMode();
         addToggleRow(root, "Stealth Mode", "Hide Peek overlay during activation", stealthMode,
                 checked -> stealthMode = checked);
     }
@@ -721,13 +806,10 @@ public class OnboardingActivity extends AppCompatActivity {
                     Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                     intent.setData(Uri.parse("package:" + getPackageName()));
                     startActivity(intent);
-                    batteryOptimized = true;
                 } catch (Exception e) {
-                    // Fallback to battery optimization settings
                     try {
                         Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
                         startActivity(intent);
-                        batteryOptimized = true;
                     } catch (Exception e2) {
                         Toast.makeText(this, "Please disable battery optimization in Android Settings", Toast.LENGTH_LONG).show();
                     }
@@ -756,13 +838,13 @@ public class OnboardingActivity extends AppCompatActivity {
         addTitle(root, getString(R.string.onboard_complete_title));
         addSubtitle(root, getString(R.string.onboard_complete_subtitle));
 
-        // Summary items
+        // Summary items — use real verification
         addSummaryItem(root, "Wake Word Trained", sampleCount >= REQUIRED_SAMPLES);
         addSummaryItem(root, "Permissions", PermissionHelper.allGranted(this));
-        addSummaryItem(root, "Default Assistant", assistantConfigured);
+        addSummaryItem(root, "Speech Recognition", speechRecognizer.isAvailable());
         addSummaryItem(root, "Voice Settings", true); // Always at least default
         addSummaryItem(root, "Peek GUI", peekEnabled);
-        addSummaryItem(root, "Battery Optimization", batteryOptimized);
+        addSummaryItem(root, "Battery Optimization", PermissionHelper.isBatteryOptimizationDisabled(this));
     }
 
     // ─── UI Builder Helpers ────────────────────────────────────
@@ -940,25 +1022,18 @@ public class OnboardingActivity extends AppCompatActivity {
         androidx.appcompat.widget.SwitchCompat toggle = new androidx.appcompat.widget.SwitchCompat(this);
         toggle.setChecked(checked);
         toggle.setThumbTintList(ContextCompat.getColorStateList(this, R.color.toggle_thumb_selector));
-        toggle.setTrackTintList(android.content.res.ColorStateList.valueOf(
-                ContextCompat.getColor(this, R.color.toggle_track_off)));
-        toggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            toggle.setTrackTintList(android.content.res.ColorStateList.valueOf(
-                    ContextCompat.getColor(this, isChecked ? R.color.brand_purple : R.color.toggle_track_off)));
-            listener.onChanged(isChecked);
-        });
+        toggle.setTrackTintList(ContextCompat.getColorStateList(this, R.color.toggle_thumb_selector));
+        toggle.setOnCheckedChangeListener((buttonView, isChecked) -> listener.onChanged(isChecked));
+
         row.addView(toggle);
 
-        LinearLayout.LayoutParams rowLp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        root.addView(row, rowLp);
+        root.addView(row);
     }
 
-    private void addSummaryItem(LinearLayout root, String label, boolean done) {
+    private TextView addSliderLabel(LinearLayout root, String label, String value) {
         LinearLayout row = new LinearLayout(this);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        row.setPadding(0, 8, 0, 8);
 
         TextView labelView = new TextView(this);
         labelView.setText(label);
@@ -969,33 +1044,9 @@ public class OnboardingActivity extends AppCompatActivity {
         labelView.setLayoutParams(labelLp);
         row.addView(labelView);
 
-        TextView statusView = new TextView(this);
-        statusView.setText(done ? "Done" : "Skipped");
-        statusView.setTextColor(ContextCompat.getColor(this, done ? R.color.success_green : R.color.text_muted));
-        statusView.setTextSize(14);
-        row.addView(statusView);
-
-        LinearLayout.LayoutParams rowLp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        root.addView(row, rowLp);
-    }
-
-    private TextView addSliderLabel(LinearLayout root, String name, String value) {
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-
-        TextView nameView = new TextView(this);
-        nameView.setText(name);
-        nameView.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
-        nameView.setTextSize(14);
-        LinearLayout.LayoutParams nameLp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
-        nameLp.weight = 1f;
-        nameView.setLayoutParams(nameLp);
-        row.addView(nameView);
-
         TextView valueView = new TextView(this);
         valueView.setText(value);
-        valueView.setTextColor(ContextCompat.getColor(this, R.color.brand_purple));
+        valueView.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
         valueView.setTextSize(14);
         row.addView(valueView);
 
@@ -1007,20 +1058,42 @@ public class OnboardingActivity extends AppCompatActivity {
         return valueView;
     }
 
-    private SeekBar addSlider(LinearLayout root, int min, int max, int defaultVal) {
+    private SeekBar addSlider(LinearLayout root, int min, int max, int progress) {
         SeekBar seekBar = new SeekBar(this);
-        seekBar.setMax(max - min);
-        seekBar.setProgress(defaultVal - min);
-        seekBar.setThumbTintList(ContextCompat.getColorStateList(this, R.color.toggle_thumb_selector));
-        seekBar.setProgressTintList(android.content.res.ColorStateList.valueOf(
-                ContextCompat.getColor(this, R.color.brand_purple)));
+        seekBar.setMin(min);
+        seekBar.setMax(max);
+        seekBar.setProgress(progress);
+        seekBar.setProgressTintList(ContextCompat.getColorStateList(this, R.color.brand_purple));
+        seekBar.setThumbTintList(ContextCompat.getColorStateList(this, R.color.brand_purple));
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.bottomMargin = 8;
         root.addView(seekBar, lp);
 
         return seekBar;
+    }
+
+    private void addSummaryItem(LinearLayout root, String label, boolean complete) {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setPadding(0, 8, 0, 8);
+        row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
+        TextView statusIcon = new TextView(this);
+        statusIcon.setText(complete ? "\u2713 " : "\u2022 ");
+        statusIcon.setTextColor(ContextCompat.getColor(this, complete ? R.color.success_green : R.color.text_muted));
+        statusIcon.setTextSize(16);
+        row.addView(statusIcon);
+
+        TextView labelView = new TextView(this);
+        labelView.setText(label);
+        labelView.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
+        labelView.setTextSize(15);
+        row.addView(labelView);
+
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        root.addView(row, lp);
     }
 
     // ─── Interfaces ────────────────────────────────────────────

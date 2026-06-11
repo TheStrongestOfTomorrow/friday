@@ -1,11 +1,11 @@
 package com.friday.assistant.core;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 
-import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -13,6 +13,7 @@ import java.util.Locale;
  *
  * Wraps Android's native TextToSpeech engine.
  * Real API — no mocks. Friday speaks back to the user.
+ * Uses the modern speak() API (non-deprecated).
  */
 public class TTSManager {
 
@@ -72,7 +73,7 @@ public class TTSManager {
     }
 
     /**
-     * Speak the given text aloud.
+     * Speak the given text aloud using the modern non-deprecated API.
      */
     public void speak(String text) {
         if (!isReady || tts == null) {
@@ -84,10 +85,11 @@ public class TTSManager {
         // Stop any current speech
         tts.stop();
 
-        HashMap<String, String> params = new HashMap<>();
-        params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "friday_utterance");
+        // Use the modern speak() API with Bundle (non-deprecated since API 21)
+        Bundle params = new Bundle();
+        params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "friday_utterance");
 
-        int result = tts.speak(text, TextToSpeech.QUEUE_FLUSH, params);
+        int result = tts.speak(text, TextToSpeech.QUEUE_FLUSH, params, "friday_utterance");
         if (result == TextToSpeech.ERROR) {
             Log.e(TAG, "TTS speak() returned error");
             if (callback != null) callback.onSpeakError("speak() failed");
