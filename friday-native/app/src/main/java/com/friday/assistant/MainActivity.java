@@ -2,14 +2,11 @@ package com.friday.assistant;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -39,6 +36,11 @@ import com.friday.assistant.service.PeekOverlayService;
  *
  * Every button works. No mocks. No placeholders.
  * Uses Google's pre-installed speech services.
+ *
+ * FIX v3.2.0:
+ *   - Peek GUI only appears during active listening, NOT on startup
+ *   - Mic permission check uses coreGranted() not allGranted()
+ *   - Better error messages for permission issues
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -65,21 +67,18 @@ public class MainActivity extends AppCompatActivity {
     private boolean isListening = false;
     private boolean activatedFromAssistant = false;
 
-    // Permission launcher
+    // Permission launcher — only requests mic for speech recognition
     private final ActivityResultLauncher<String[]> permissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(),
                     result -> {
-                        boolean allGranted = true;
-                        for (Boolean granted : result.values()) {
-                            if (!granted) allGranted = false;
-                        }
-                        if (allGranted) {
-                            setStatus("active", "Ready", "All permissions granted. Tap the mic to begin.");
+                        Boolean micGranted = result.get(Manifest.permission.RECORD_AUDIO);
+                        if (micGranted != null && micGranted) {
+                            setStatus("active", "Ready", "Microphone ready. Tap the mic to begin.");
                             if (activatedFromAssistant) {
                                 startListening();
                             }
                         } else {
-                            setStatus("idle", "Permissions Needed", "Some permissions were denied. Go to Settings to grant them.");
+                            setStatus("idle", "Microphone Needed", "Friday needs microphone access to hear you.");
                         }
                     });
 
@@ -146,21 +145,24 @@ public class MainActivity extends AppCompatActivity {
         ttsManager.setRate(prefs.getTtsRate());
         ttsManager.setPitch(prefs.getTtsPitch());
 
-        // Check permissions on launch
-        checkPermissionsOnLaunch();
+        // FIX: Check mic permission specifically, not all permissions
+        // The old code used allGranted() which required contacts permission too
+        if (!PermissionHelper.isMicGranted(this)) {
+            setStatus("idle", "Microphone Needed", "Friday needs mic access to hear your commands.");
+        } else if (!speechRecognizer.isAvailable()) {
+            setStatus("error", "Speech Not Available", "Install the Google app for speech recognition.");
+        } else {
+            setStatus("idle", "Idle", activatedFromAssistant ? "Activating..." : "Tap the mic to begin.");
+        }
 
         // Start foreground service if not running
         startForegroundService();
 
-        // Start/stop Peek overlay based on preference
-        updatePeekOverlay();
-
-        // Check speech recognizer availability
-        if (!speechRecognizer.isAvailable()) {
-            setStatus("error", "Speech Not Available", "Install the Google app for speech recognition.");
-        } else {
-            setStatus("idle", "Idle", activatedFromAssistant ? "Activating..." : "Tap the mic or say your wake word.");
-        }
+        // FIX: Do NOT show Peek overlay on startup.
+        // Peek should only appear when Friday is actively listening.
+        // The old code called updatePeekOverlay() here which auto-showed it.
+        // Now we only hide it to clean up any stale overlay.
+        hidePeekOverlay();
     }
 
     @Override
@@ -178,8 +180,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!PermissionHelper.allGranted(this)) {
-            setStatus("idle", "Permissions Needed", "Some permissions are missing. Go to Settings to grant them.");
+        // FIX: Use coreGranted (mic only) not allGranted for the mic status
+        if (!PermissionHelper.isMicGranted(this)) {
+            setStatus("idle", "Microphone Needed", "Friday needs mic access to hear your commands.");
         }
 
         if (speechRecognizer != null && !speechRecognizer.isAvailable()) {
@@ -201,6 +204,8 @@ public class MainActivity extends AppCompatActivity {
         if (ttsManager != null) {
             ttsManager.destroy();
         }
+        // Clean up peek overlay when leaving
+        hidePeekOverlay();
     }
 
     // ─── Listening ─────────────────────────────────────────────
@@ -214,7 +219,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startListening() {
-        if (!PermissionHelper.isGranted(this, Manifest.permission.RECORD_AUDIO)) {
+        // FIX: Check ONLY mic permission for speech recognition
+        // The old code checked allGranted() which required contacts too
+        if (!PermissionHelper.isMicGranted(this)) {
             permissionLauncher.launch(new String[]{Manifest.permission.RECORD_AUDIO});
             return;
         }
@@ -235,6 +242,8 @@ public class MainActivity extends AppCompatActivity {
         speechRecognizer.startListening();
 
         setStatus("listening", "Listening", "Speak your command...");
+
+        // FIX: Peek overlay only shows during active listening
         showPeekOverlay("Listening...", "listening");
     }
 
@@ -244,7 +253,9 @@ public class MainActivity extends AppCompatActivity {
         btnListen.clearAnimation();
         listenLabel.setText(R.string.btn_listen);
         speechRecognizer.stopListening();
-        showPeekOverlay("Idle", "idle");
+
+        // FIX: Hide peek when stopping
+        hidePeekOverlay();
     }
 
     // ─── Speech Not Available Dialog ──────────────────────────
@@ -276,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     try {
                         startActivity(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.googlequicksearchbox")));
+                                android.net.Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.googlequicksearchbox")));
                     } catch (Exception ignored) {}
                 }
             });
@@ -310,17 +321,6 @@ public class MainActivity extends AppCompatActivity {
         statusDot.setBackgroundColor(dotColor);
     }
 
-    // ─── Permissions ───────────────────────────────────────────
-
-    private void checkPermissionsOnLaunch() {
-        if (!PermissionHelper.allGranted(this)) {
-            String[] ungranted = PermissionHelper.getUngrantedPermissions(this);
-            if (ungranted.length > 0) {
-                permissionLauncher.launch(ungranted);
-            }
-        }
-    }
-
     // ─── Foreground Service ────────────────────────────────────
 
     private void startForegroundService() {
@@ -340,29 +340,33 @@ public class MainActivity extends AppCompatActivity {
 
     // ─── Peek Overlay ──────────────────────────────────────────
 
-    private void updatePeekOverlay() {
-        if (prefs.isPeekGuiEnabled() && !prefs.isStealthMode()) {
-            Intent intent = new Intent(this, PeekOverlayService.class);
-            intent.setAction("SHOW");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(intent);
-            } else {
-                startService(intent);
-            }
-        } else {
-            Intent intent = new Intent(this, PeekOverlayService.class);
-            intent.setAction("HIDE");
-            startService(intent);
-        }
+    /**
+     * FIX: Peek overlay is now only shown during active listening/processing.
+     * It does NOT auto-show on app startup anymore.
+     */
+    private void showPeekOverlay(String text, String state) {
+        if (prefs.isStealthMode()) return;
+
+        Intent intent = new Intent(this, PeekOverlayService.class);
+        intent.setAction("SHOW");
+        intent.putExtra("text", text);
+        intent.putExtra("state", state);
+        startService(intent);
     }
 
-    private void showPeekOverlay(String text, String state) {
-        if (!prefs.isPeekGuiEnabled() || prefs.isStealthMode()) return;
+    private void updatePeekOverlay(String text, String state) {
+        if (prefs.isStealthMode()) return;
 
         Intent intent = new Intent(this, PeekOverlayService.class);
         intent.setAction("UPDATE");
         intent.putExtra("text", text);
         intent.putExtra("state", state);
+        startService(intent);
+    }
+
+    private void hidePeekOverlay() {
+        Intent intent = new Intent(this, PeekOverlayService.class);
+        intent.setAction("HIDE");
         startService(intent);
     }
 
@@ -376,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
                 if (text != null && !text.isEmpty()) {
                     transcriptionText.setText(text);
                     transcriptionText.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.text_secondary));
-                    showPeekOverlay("Heard: " + text, "listening");
+                    updatePeekOverlay("Heard: " + text, "listening");
                 }
             });
         }
@@ -396,12 +400,16 @@ public class MainActivity extends AppCompatActivity {
                     // Use IntentRouter to process the command
                     String response = intentRouter.routeCommand(text);
                     setStatus("active", "Recognized", "\"" + text + "\"");
-                    showPeekOverlay(response, "active");
+                    updatePeekOverlay(response, "active");
+
+                    // FIX: Auto-hide peek after 5 seconds of inactivity
+                    new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(
+                            MainActivity.this::hidePeekOverlay, 5000);
                 } else {
                     setStatus("idle", "Idle", "No speech detected. Try again.");
                     transcriptionText.setText("No speech detected");
                     transcriptionText.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.text_muted));
-                    showPeekOverlay("No speech detected", "idle");
+                    hidePeekOverlay();
                 }
             });
         }
@@ -423,10 +431,14 @@ public class MainActivity extends AppCompatActivity {
 
                 transcriptionText.setText("Error: " + message);
                 transcriptionText.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.danger_red));
-                showPeekOverlay("Error: " + message, "error");
+                hidePeekOverlay();
 
+                // FIX: Only request mic permission for mic-related errors
+                // Don't request ALL permissions when it's just a mic issue
                 if (errorCode == android.speech.SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS) {
-                    checkPermissionsOnLaunch();
+                    if (!PermissionHelper.isMicGranted(MainActivity.this)) {
+                        permissionLauncher.launch(new String[]{Manifest.permission.RECORD_AUDIO});
+                    }
                 }
             });
         }

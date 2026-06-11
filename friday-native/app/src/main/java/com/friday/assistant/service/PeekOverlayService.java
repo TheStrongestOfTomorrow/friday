@@ -27,7 +27,14 @@ import com.friday.assistant.R;
  * Shows a floating overlay (Peek GUI) on top of other apps.
  * Requires SYSTEM_ALERT_WINDOW permission.
  *
- * This is a REAL overlay using WindowManager — not a mock.
+ * FIX v3.2.0: The overlay is no longer auto-shown on startup.
+ * It ONLY appears when Friday is actively listening or processing
+ * a command, and auto-hides after inactivity.
+ *
+ * The old code auto-showed the overlay with a wave animation
+ * whenever the service started, which was wrong — it should only
+ * appear when the user activates Friday (by saying "Hey Friday"
+ * or pressing the mic button).
  */
 public class PeekOverlayService extends Service {
 
@@ -40,12 +47,17 @@ public class PeekOverlayService extends Service {
     private boolean isShowing = false;
 
     private final Handler animHandler = new Handler(Looper.getMainLooper());
+    private final Handler autoHideHandler = new Handler(Looper.getMainLooper());
     private int animFrame = 0;
+
+    // Auto-hide after this many milliseconds of inactivity
+    private static final long AUTO_HIDE_DELAY_MS = 8000L;
 
     @Override
     public void onCreate() {
         super.onCreate();
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        // FIX: Do NOT auto-show overlay on service creation
     }
 
     @Override
@@ -53,21 +65,35 @@ public class PeekOverlayService extends Service {
         if (intent != null) {
             String action = intent.getAction();
             if ("SHOW".equals(action)) {
-                showOverlay();
+                String text = intent.getStringExtra("text");
+                String state = intent.getStringExtra("state");
+                showOverlay(text, state);
             } else if ("HIDE".equals(action)) {
                 hideOverlay();
             } else if ("UPDATE".equals(action)) {
                 String text = intent.getStringExtra("text");
                 String state = intent.getStringExtra("state");
-                updateOverlay(text, state);
+                if (isShowing) {
+                    updateOverlay(text, state);
+                } else {
+                    // Not showing yet — show it with the update
+                    showOverlay(text, state);
+                }
             }
         }
         return START_NOT_STICKY;
     }
 
     @SuppressLint("InflateParams")
-    private void showOverlay() {
-        if (isShowing || windowManager == null) return;
+    private void showOverlay(String text, String state) {
+        if (isShowing && overlayView != null) {
+            // Already showing — just update
+            updateOverlay(text, state);
+            resetAutoHide();
+            return;
+        }
+
+        if (windowManager == null) return;
 
         // Check overlay permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -81,6 +107,15 @@ public class PeekOverlayService extends Service {
 
         peekText = overlayView.findViewById(R.id.peekText);
         peekStatusDot = overlayView.findViewById(R.id.peekStatusDot);
+
+        // Set initial content
+        if (text != null && peekText != null) {
+            peekText.setText(text);
+        }
+        if (state != null && peekStatusDot != null) {
+            int dotColor = getDotColor(state);
+            peekStatusDot.setBackgroundColor(dotColor);
+        }
 
         int layoutFlag;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -105,6 +140,7 @@ public class PeekOverlayService extends Service {
             windowManager.addView(overlayView, params);
             isShowing = true;
             startWaveAnimation();
+            resetAutoHide();
             Log.d(TAG, "Peek overlay shown");
         } catch (Exception e) {
             Log.e(TAG, "Failed to show overlay", e);
@@ -112,6 +148,8 @@ public class PeekOverlayService extends Service {
     }
 
     private void hideOverlay() {
+        autoHideHandler.removeCallbacksAndMessages(null);
+
         if (!isShowing || overlayView == null) return;
 
         try {
@@ -131,17 +169,34 @@ public class PeekOverlayService extends Service {
             peekText.setText(text);
         }
 
-        int dotColor;
-        if ("listening".equals(state)) {
-            dotColor = ContextCompat.getColor(this, R.color.brand_purple);
-        } else if ("active".equals(state)) {
-            dotColor = ContextCompat.getColor(this, R.color.success_green);
-        } else if ("error".equals(state)) {
-            dotColor = ContextCompat.getColor(this, R.color.danger_red);
-        } else {
-            dotColor = ContextCompat.getColor(this, R.color.status_idle);
+        if (state != null) {
+            int dotColor = getDotColor(state);
+            peekStatusDot.setBackgroundColor(dotColor);
         }
-        peekStatusDot.setBackgroundColor(dotColor);
+    }
+
+    private int getDotColor(String state) {
+        if ("listening".equals(state)) {
+            return ContextCompat.getColor(this, R.color.brand_purple);
+        } else if ("active".equals(state)) {
+            return ContextCompat.getColor(this, R.color.success_green);
+        } else if ("error".equals(state)) {
+            return ContextCompat.getColor(this, R.color.danger_red);
+        } else {
+            return ContextCompat.getColor(this, R.color.status_idle);
+        }
+    }
+
+    /**
+     * FIX: Auto-hide the overlay after inactivity.
+     * Prevents the overlay from staying visible forever.
+     */
+    private void resetAutoHide() {
+        autoHideHandler.removeCallbacksAndMessages(null);
+        autoHideHandler.postDelayed(() -> {
+            Log.d(TAG, "Auto-hiding peek overlay after inactivity");
+            hideOverlay();
+        }, AUTO_HIDE_DELAY_MS);
     }
 
     private void startWaveAnimation() {

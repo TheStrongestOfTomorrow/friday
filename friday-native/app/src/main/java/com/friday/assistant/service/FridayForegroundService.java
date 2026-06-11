@@ -1,11 +1,15 @@
 package com.friday.assistant.service;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
+import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -14,10 +18,10 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.friday.assistant.MainActivity;
 import com.friday.assistant.R;
-import com.friday.assistant.core.AudioFocusManager;
 import com.friday.assistant.core.FridaySpeechRecognizer;
 import com.friday.assistant.core.PrefsManager;
 import com.friday.assistant.core.WakeWordEngine;
@@ -25,12 +29,23 @@ import com.friday.assistant.core.WakeWordEngine;
 /**
  * Friday — Foreground Service
  *
- * Keeps Friday running in the background. When wake word detection
- * is enabled, this service periodically listens for the wake word
- * and launches MainActivity when it's detected.
+ * Keeps Friday running in the background with a persistent notification.
  *
- * This is a REAL foreground service with a persistent notification
- * and actual background wake word detection.
+ * FIX v3.2.0: Complete rewrite of wake word detection.
+ * The old approach used SpeechRecognizer in a background service, which
+ * is unreliable on modern Android (requires Activity context on most devices,
+ * gets killed by battery optimization, doesn't work from background on 11+).
+ *
+ * New approach: Two-phase detection
+ *   Phase 1: AudioRecord energy detection — lightweight, always-on
+ *     Uses raw microphone input to detect when someone is speaking
+ *     (energy level above threshold). This uses very little CPU.
+ *   Phase 2: When speech is detected, start SpeechRecognizer briefly
+ *     to transcribe what was said, then check against the wake word.
+ *     SpeechRecognizer is only active for a few seconds at a time.
+ *
+ * This is much more reliable and battery-efficient than the old approach
+ * of constantly starting/stopping SpeechRecognizer.
  */
 public class FridayForegroundService extends Service {
 
@@ -38,24 +53,39 @@ public class FridayForegroundService extends Service {
     private static final String CHANNEL_ID = "friday_service_channel";
     private static final int NOTIFICATION_ID = 1001;
 
-    // Wake word detection interval: listen for 5 seconds, then pause for 10 seconds
-    private static final long LISTEN_DURATION_MS = 5000L;
-    private static final long PAUSE_DURATION_MS = 10000L;
+    // Audio monitoring settings
+    private static final int SAMPLE_RATE = 16000;
+    private static final int CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO;
+    private static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
+    private static final int BUFFER_SIZE = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT);
+    private static final int ENERGY_CHECK_INTERVAL_MS = 500; // Check every 500ms
+    private static final int SPEECH_ENERGY_THRESHOLD = 1500; // RMS threshold for speech detection
+    private static final int SILENCE_COUNT_BEFORE_STOP = 3; // 3 consecutive low readings = silence
+    private static final long COOLDOWN_AFTER_ACTIVATION_MS = 30000L; // 30s cooldown after detection
 
     private PrefsManager prefs;
-    private AudioFocusManager audioFocusManager;
-    private FridaySpeechRecognizer speechRecognizer;
-    private Handler wakeWordHandler;
-    private boolean isWakeWordListening = false;
+    private Handler handler;
     private boolean isMonitoring = false;
+    private boolean isTranscribing = false;
+
+    // Phase 1: Raw audio monitoring
+    private AudioRecord audioRecord;
+    private boolean isAudioRecording = false;
+    private int silenceCount = 0;
+
+    // Phase 2: Speech recognition (only when speech detected)
+    private FridaySpeechRecognizer speechRecognizer;
+    private com.friday.assistant.core.AudioFocusManager audioFocusManager;
+
+    private long lastActivationTime = 0;
 
     @Override
     public void onCreate() {
         super.onCreate();
         createNotificationChannel();
         prefs = new PrefsManager(this);
-        audioFocusManager = new AudioFocusManager(this);
-        wakeWordHandler = new Handler(Looper.getMainLooper());
+        handler = new Handler(Looper.getMainLooper());
+        audioFocusManager = new com.friday.assistant.core.AudioFocusManager(this);
 
         Log.d(TAG, "Foreground service created");
     }
@@ -76,7 +106,7 @@ public class FridayForegroundService extends Service {
         }
 
         // Default: start foreground and begin monitoring if enabled
-        Notification notification = buildNotification("Friday is Listening", "Tap to open Friday");
+        Notification notification = buildNotification("Friday is Ready", "Tap to open Friday");
         startForeground(NOTIFICATION_ID, notification);
         Log.d(TAG, "Foreground service started");
 
@@ -101,28 +131,31 @@ public class FridayForegroundService extends Service {
         Log.d(TAG, "Foreground service destroyed");
     }
 
-    // ─── Wake Word Monitoring ──────────────────────────────────
+    // ─── Wake Word Monitoring (Two-Phase) ──────────────────────
 
     private void startWakeWordMonitoring() {
         if (isMonitoring) return;
 
-        isMonitoring = true;
-        updateNotification("Friday is Listening", "Listening for \"" + prefs.getWakeWord() + "\"");
-        Log.d(TAG, "Starting wake word monitoring for: " + prefs.getWakeWord());
-
-        // Initialize speech recognizer for background listening
-        if (speechRecognizer == null) {
-            speechRecognizer = new FridaySpeechRecognizer(this, audioFocusManager);
-            speechRecognizer.setCallback(new WakeWordCallback());
+        // Check mic permission
+        if (!com.friday.assistant.core.PermissionHelper.isMicGranted(this)) {
+            Log.w(TAG, "Microphone permission not granted, cannot monitor for wake word");
+            updateNotification("Friday — No Mic", "Grant microphone permission to enable wake word");
+            return;
         }
 
-        scheduleNextListening();
+        isMonitoring = true;
+        updateNotification("Friday is Listening", "Listening for \"" + prefs.getWakeWord() + "\"");
+        Log.d(TAG, "Starting wake word monitoring (Phase 1: audio energy)");
+
+        // Start Phase 1: raw audio energy monitoring
+        startAudioEnergyMonitoring();
     }
 
     private void stopWakeWordMonitoring() {
         isMonitoring = false;
-        isWakeWordListening = false;
-        wakeWordHandler.removeCallbacksAndMessages(null);
+        isTranscribing = false;
+        handler.removeCallbacksAndMessages(null);
+        stopAudioEnergyMonitoring();
 
         if (speechRecognizer != null) {
             speechRecognizer.destroy();
@@ -132,66 +165,191 @@ public class FridayForegroundService extends Service {
         Log.d(TAG, "Wake word monitoring stopped");
     }
 
-    private void scheduleNextListening() {
-        if (!isMonitoring) return;
+    // ─── Phase 1: Audio Energy Detection ───────────────────────
+    // Lightweight always-on monitoring using AudioRecord.
+    // Only detects when someone is speaking (energy above threshold).
+    // Does NOT do speech recognition — that's Phase 2.
 
-        wakeWordHandler.postDelayed(() -> {
-            if (!isMonitoring) return;
+    private void startAudioEnergyMonitoring() {
+        if (isAudioRecording) return;
 
-            if (!prefs.isWakeWordEnabled()) {
-                // Wake word disabled — stop monitoring but keep service alive
-                updateNotification("Friday is Idle", "Wake word detection disabled");
-                isMonitoring = false;
+        // Check mic permission again
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            Log.w(TAG, "No mic permission for audio monitoring");
+            if (isMonitoring) {
+                handler.postDelayed(this::startAudioEnergyMonitoring, 5000);
+            }
+            return;
+        }
+
+        try {
+            audioRecord = new AudioRecord(
+                    MediaRecorder.AudioSource.VOICE_RECOGNITION,
+                    SAMPLE_RATE,
+                    CHANNEL_CONFIG,
+                    AUDIO_FORMAT,
+                    Math.max(BUFFER_SIZE, 1024));
+
+            if (audioRecord.getState() != AudioRecord.STATE_INITIALIZED) {
+                Log.e(TAG, "AudioRecord not initialized");
+                audioRecord.release();
+                audioRecord = null;
+                // Retry later
+                if (isMonitoring) {
+                    handler.postDelayed(this::startAudioEnergyMonitoring, 5000);
+                }
                 return;
             }
 
-            startWakeWordListeningCycle();
-        }, PAUSE_DURATION_MS);
+            audioRecord.startRecording();
+            isAudioRecording = true;
+            silenceCount = 0;
+            Log.d(TAG, "Audio energy monitoring started");
+
+            // Start checking audio energy periodically
+            checkAudioEnergy();
+
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to start audio monitoring", e);
+            audioRecord = null;
+            if (isMonitoring) {
+                handler.postDelayed(this::startAudioEnergyMonitoring, 10000);
+            }
+        }
     }
 
-    private void startWakeWordListeningCycle() {
-        if (!isMonitoring || isWakeWordListening) return;
+    private void stopAudioEnergyMonitoring() {
+        isAudioRecording = false;
+        if (audioRecord != null) {
+            try {
+                if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
+                    audioRecord.stop();
+                }
+                audioRecord.release();
+            } catch (Exception e) {
+                Log.e(TAG, "Error stopping AudioRecord", e);
+            }
+            audioRecord = null;
+        }
+    }
+
+    private void checkAudioEnergy() {
+        if (!isMonitoring || !isAudioRecording || audioRecord == null) return;
+
+        try {
+            short[] buffer = new short[BUFFER_SIZE / 2];
+            int read = audioRecord.read(buffer, 0, buffer.length);
+
+            if (read > 0) {
+                // Calculate RMS energy
+                long sum = 0;
+                for (int i = 0; i < read; i++) {
+                    sum += (long) buffer[i] * buffer[i];
+                }
+                double rms = Math.sqrt((double) sum / read);
+
+                if (rms > SPEECH_ENERGY_THRESHOLD) {
+                    // Speech detected!
+                    silenceCount = 0;
+                    Log.d(TAG, "Speech energy detected: RMS=" + (int)rms);
+
+                    // Only start Phase 2 if we're not already transcribing
+                    // and we're not in cooldown
+                    if (!isTranscribing && !isInCooldown()) {
+                        startTranscription();
+                    }
+                } else {
+                    silenceCount++;
+                    if (silenceCount > SILENCE_COUNT_BEFORE_STOP && isTranscribing) {
+                        // Speaker has stopped, stop transcription
+                        stopTranscription();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error checking audio energy", e);
+        }
+
+        // Schedule next check
+        if (isMonitoring) {
+            handler.postDelayed(this::checkAudioEnergy, ENERGY_CHECK_INTERVAL_MS);
+        }
+    }
+
+    private boolean isInCooldown() {
+        return System.currentTimeMillis() - lastActivationTime < COOLDOWN_AFTER_ACTIVATION_MS;
+    }
+
+    // ─── Phase 2: Speech Recognition ───────────────────────────
+    // Started when Phase 1 detects speech energy.
+    // Uses SpeechRecognizer for a brief period to transcribe,
+    // then checks against the wake word.
+
+    private void startTranscription() {
+        if (isTranscribing) return;
 
         // Check if SpeechRecognizer is available
         if (speechRecognizer == null) {
             speechRecognizer = new FridaySpeechRecognizer(this, audioFocusManager);
-            speechRecognizer.setCallback(new WakeWordCallback());
+            speechRecognizer.setCallback(new TranscriptionCallback());
         }
 
         if (!speechRecognizer.isAvailable()) {
-            Log.w(TAG, "SpeechRecognizer not available, skipping wake word cycle");
-            scheduleNextListening();
+            Log.w(TAG, "SpeechRecognizer not available for transcription");
             return;
         }
 
-        isWakeWordListening = true;
-        speechRecognizer.startListening();
+        isTranscribing = true;
+        Log.d(TAG, "Phase 2: Starting speech transcription");
 
-        // Auto-stop listening after the listen duration
-        wakeWordHandler.postDelayed(() -> {
-            if (speechRecognizer != null && speechRecognizer.isListening()) {
-                speechRecognizer.stopListening();
-            }
-            isWakeWordListening = false;
+        try {
+            speechRecognizer.startListening();
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to start transcription", e);
+            isTranscribing = false;
+        }
 
-            // Schedule next cycle
-            if (isMonitoring) {
-                scheduleNextListening();
+        // Auto-stop transcription after 5 seconds max
+        handler.postDelayed(() -> {
+            if (isTranscribing) {
+                stopTranscription();
             }
-        }, LISTEN_DURATION_MS);
+        }, 5000);
     }
 
-    // ─── Wake Word Callback ────────────────────────────────────
+    private void stopTranscription() {
+        if (speechRecognizer != null && speechRecognizer.isListening()) {
+            try {
+                speechRecognizer.stopListening();
+            } catch (Exception e) {
+                Log.e(TAG, "Error stopping transcription", e);
+            }
+        }
+        isTranscribing = false;
+    }
 
-    private class WakeWordCallback implements FridaySpeechRecognizer.SpeechCallback {
+    // ─── Transcription Callback ────────────────────────────────
+
+    private class TranscriptionCallback implements FridaySpeechRecognizer.SpeechCallback {
         @Override
         public void onPartialResult(String text) {
-            // Not used in background monitoring
+            // Check partial results against wake word for faster response
+            if (text != null && !text.isEmpty()) {
+                String wakeWord = prefs.getWakeWord();
+                float threshold = prefs.getConfidenceThreshold();
+                WakeWordEngine.MatchResult match = WakeWordEngine.match(
+                        text.toLowerCase(), wakeWord.toLowerCase(), threshold);
+                if (match.matched) {
+                    Log.d(TAG, "Wake word detected in partial result!");
+                    onWakeWordDetected();
+                }
+            }
         }
 
         @Override
         public void onFinalResult(String text) {
-            isWakeWordListening = false;
+            isTranscribing = false;
             if (text == null || text.isEmpty()) return;
 
             String wakeWord = prefs.getWakeWord();
@@ -201,33 +359,19 @@ public class FridayForegroundService extends Service {
                     text.toLowerCase(), wakeWord.toLowerCase(), threshold);
 
             if (match.matched) {
-                Log.d(TAG, "Wake word detected! Launching MainActivity");
-                updateNotification("Wake Word Detected!", "Opening Friday...");
-
-                // Launch MainActivity
-                Intent intent = new Intent(FridayForegroundService.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("from_assistant", true);
-                startActivity(intent);
-
-                // Pause monitoring for a bit after activation to avoid loops
-                wakeWordHandler.removeCallbacksAndMessages(null);
-                wakeWordHandler.postDelayed(() -> {
-                    if (isMonitoring) {
-                        updateNotification("Friday is Listening", "Listening for \"" + prefs.getWakeWord() + "\"");
-                        scheduleNextListening();
-                    }
-                }, 30000L); // Wait 30 seconds after activation before listening again
+                onWakeWordDetected();
+            } else {
+                Log.d(TAG, "Heard \"" + text + "\" — not a wake word match");
             }
         }
 
         @Override
         public void onError(String message, int errorCode) {
-            isWakeWordListening = false;
-            // Don't log too verbosely for expected errors like NO_MATCH or SPEECH_TIMEOUT
+            isTranscribing = false;
+            // Don't log verbosely for expected errors
             if (errorCode != android.speech.SpeechRecognizer.ERROR_NO_MATCH &&
                 errorCode != android.speech.SpeechRecognizer.ERROR_SPEECH_TIMEOUT) {
-                Log.w(TAG, "Background speech error: " + message);
+                Log.w(TAG, "Transcription error: " + message);
             }
         }
 
@@ -236,20 +380,48 @@ public class FridayForegroundService extends Service {
 
         @Override
         public void onListeningStart() {
-            Log.d(TAG, "Background listening cycle started");
+            Log.d(TAG, "Transcription started");
         }
 
         @Override
         public void onListeningEnd() {
-            Log.d(TAG, "Background listening cycle ended");
+            Log.d(TAG, "Transcription ended");
         }
+    }
+
+    // ─── Wake Word Detected! ───────────────────────────────────
+
+    private void onWakeWordDetected() {
+        lastActivationTime = System.currentTimeMillis();
+        Log.d(TAG, "WAKE WORD DETECTED! Launching Friday...");
+        updateNotification("Wake Word Detected!", "Opening Friday...");
+
+        // Stop current transcription
+        isTranscribing = false;
+        if (speechRecognizer != null) {
+            speechRecognizer.cancel();
+        }
+
+        // Pause audio monitoring during activation
+        stopAudioEnergyMonitoring();
+
+        // Launch MainActivity with assistant flag
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("from_assistant", true);
+        startActivity(intent);
+
+        // Resume monitoring after cooldown
+        handler.postDelayed(() -> {
+            if (isMonitoring) {
+                updateNotification("Friday is Listening", "Listening for \"" + prefs.getWakeWord() + "\"");
+                startAudioEnergyMonitoring();
+            }
+        }, COOLDOWN_AFTER_ACTIVATION_MS);
     }
 
     // ─── Notification ──────────────────────────────────────────
 
-    /**
-     * Update the foreground notification text.
-     */
     public void updateNotification(String title, String text) {
         Notification notification = buildNotification(title, text);
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

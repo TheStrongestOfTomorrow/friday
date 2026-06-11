@@ -340,7 +340,7 @@ public class OnboardingActivity extends AppCompatActivity {
 
         // Permission items
         addPermissionItem(root, "\uD83C\uDF99\uFE0F", "Microphone", "Required for wake word and voice commands",
-                PermissionHelper.isGranted(this, Manifest.permission.RECORD_AUDIO));
+                PermissionHelper.isMicGranted(this));
 
         addPermissionItem(root, "\uD83D\uDD14", "Notifications", "Status updates and service alerts",
                 PermissionHelper.isGranted(this, Manifest.permission.POST_NOTIFICATIONS));
@@ -473,7 +473,7 @@ public class OnboardingActivity extends AppCompatActivity {
             }
 
             // Check mic permission
-            if (!PermissionHelper.isGranted(this, Manifest.permission.RECORD_AUDIO)) {
+            if (!PermissionHelper.isMicGranted(this)) {
                 permissionLauncher.launch(new String[]{Manifest.permission.RECORD_AUDIO});
                 return;
             }
@@ -485,51 +485,115 @@ public class OnboardingActivity extends AppCompatActivity {
             }
 
             recordBtn.setEnabled(false);
-            recordBtn.setText("Recording...");
+            recordBtn.setText("Listening — say your wake word...");
             finishRecordingPending = false;
 
-            // Real speech recognition listening
+            // FIX: Sample recording now ACTUALLY validates the audio.
+            // The speech recognizer must hear and transcribe something
+            // that matches the wake word (or at least some speech).
+            // If nothing is heard or there's an error, the sample does NOT count.
+            final String targetWakeWord = prefs.getWakeWord();
+
             speechRecognizer.setCallback(new FridaySpeechRecognizer.SpeechCallback() {
-                @Override public void onPartialResult(String text) {}
+                @Override
+                public void onPartialResult(String text) {
+                    // Show what we're hearing in real-time
+                    if (text != null && !text.isEmpty()) {
+                        runOnUiThread(() -> sampleText.setText("Heard: \"" + text + "\"..."));
+                    }
+                }
                 @Override public void onRmsChanged(float rmsdB) {}
                 @Override public void onListeningStart() {}
                 @Override public void onListeningEnd() {}
 
                 @Override
                 public void onFinalResult(String text) {
-                    // Guard against double-increment
                     if (!finishRecordingPending) {
                         finishRecordingPending = true;
-                        runOnUiThread(() -> finishRecording(recordBtn, sampleText, dots));
+                        // FIX: Only count the sample if we actually heard speech
+                        if (text != null && !text.trim().isEmpty()) {
+                            // Check if it matches the wake word
+                            WakeWordEngine.MatchResult match = WakeWordEngine.match(
+                                    text.toLowerCase(), targetWakeWord.toLowerCase(),
+                                    prefs.getConfidenceThreshold());
+                            if (match.matched) {
+                                runOnUiThread(() -> finishRecording(recordBtn, sampleText, dots, true));
+                            } else if (match.ambiguous) {
+                                runOnUiThread(() -> {
+                                    sampleText.setText("Heard: \"" + text + "\" — " + match.suggestion);
+                                    sampleText.setTextColor(ContextCompat.getColor(OnboardingActivity.this, R.color.warning_amber));
+                                    recordBtn.setEnabled(true);
+                                    recordBtn.setText("Try Again (" + sampleCount + "/" + REQUIRED_SAMPLES + ")");
+                                    Toast.makeText(OnboardingActivity.this, "Almost! Say \"" + targetWakeWord + "\" more clearly.", Toast.LENGTH_SHORT).show();
+                                });
+                            } else {
+                                // Heard something but not the wake word — still count it as practice
+                                runOnUiThread(() -> {
+                                    sampleText.setText("Heard: \"" + text + "\" — try saying \"" + targetWakeWord + "\"");
+                                    sampleText.setTextColor(ContextCompat.getColor(OnboardingActivity.this, R.color.text_secondary));
+                                    recordBtn.setEnabled(true);
+                                    recordBtn.setText("Try Again (" + sampleCount + "/" + REQUIRED_SAMPLES + ")");
+                                });
+                            }
+                        } else {
+                            // No speech detected — don't count the sample
+                            runOnUiThread(() -> {
+                                sampleText.setText("No speech detected. Please try again.");
+                                sampleText.setTextColor(ContextCompat.getColor(OnboardingActivity.this, R.color.text_secondary));
+                                recordBtn.setEnabled(true);
+                                recordBtn.setText("Try Again (" + sampleCount + "/" + REQUIRED_SAMPLES + ")");
+                            });
+                        }
                     }
                 }
 
                 @Override
                 public void onError(String message, int errorCode) {
-                    // Still count the sample even on error (the user spoke, just wasn't recognized)
                     if (!finishRecordingPending) {
                         finishRecordingPending = true;
-                        runOnUiThread(() -> finishRecording(recordBtn, sampleText, dots));
+                        // FIX: On error, do NOT count the sample — the user needs to try again
+                        runOnUiThread(() -> {
+                            sampleText.setText("Could not hear you — " + message);
+                            sampleText.setTextColor(ContextCompat.getColor(OnboardingActivity.this, R.color.text_secondary));
+                            recordBtn.setEnabled(true);
+                            recordBtn.setText("Try Again (" + sampleCount + "/" + REQUIRED_SAMPLES + ")");
+                        });
                     }
                 }
             });
             speechRecognizer.startListening();
 
-            // Auto-stop after 2 seconds
+            // Auto-stop after 4 seconds (giving more time to speak)
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 if (speechRecognizer.isListening()) {
                     speechRecognizer.stopListening();
                 }
-                // Only call finishRecording from here if the callback hasn't fired yet
+                // If no callback fired after 4 seconds, mark as failed attempt
                 if (!finishRecordingPending) {
                     finishRecordingPending = true;
-                    finishRecording(recordBtn, sampleText, dots);
+                    runOnUiThread(() -> {
+                        sampleText.setText("No speech detected. Please try again.");
+                        sampleText.setTextColor(ContextCompat.getColor(OnboardingActivity.this, R.color.text_secondary));
+                        recordBtn.setEnabled(true);
+                        recordBtn.setText("Try Again (" + sampleCount + "/" + REQUIRED_SAMPLES + ")");
+                    });
                 }
-            }, 2000);
+            }, 4000);
         });
     }
 
-    private void finishRecording(Button recordBtn, TextView sampleText, List<View> dots) {
+    /**
+     * Called when a sample is successfully recorded and validated.
+     * FIX: Now takes a 'success' parameter — only counts valid samples.
+     */
+    private void finishRecording(Button recordBtn, TextView sampleText, List<View> dots, boolean success) {
+        if (!success) {
+            // Don't count invalid samples — just re-enable the button
+            recordBtn.setEnabled(true);
+            recordBtn.setText("Try Again (" + sampleCount + "/" + REQUIRED_SAMPLES + ")");
+            return;
+        }
+
         sampleCount++;
         prefs.setWakeWordSamples(sampleCount);
 
@@ -538,13 +602,14 @@ public class OnboardingActivity extends AppCompatActivity {
             dots.get(i).setBackground(ContextCompat.getDrawable(this, R.drawable.bg_sample_dot_filled));
         }
 
-        sampleText.setText("Sample " + sampleCount + " of " + REQUIRED_SAMPLES);
+        sampleText.setText("Sample " + sampleCount + " of " + REQUIRED_SAMPLES + " ✓");
+        sampleText.setTextColor(ContextCompat.getColor(this, R.color.success_green));
 
         if (sampleCount >= REQUIRED_SAMPLES) {
             recordBtn.setText("Training Complete!");
             recordBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.bg_button_primary));
             recordBtn.setEnabled(false);
-            sampleText.setText("All " + REQUIRED_SAMPLES + " samples captured!");
+            sampleText.setText("All " + REQUIRED_SAMPLES + " samples captured! Wake word trained.");
             sampleText.setTextColor(ContextCompat.getColor(this, R.color.success_green));
         } else {
             recordBtn.setEnabled(true);
@@ -585,7 +650,7 @@ public class OnboardingActivity extends AppCompatActivity {
         }
 
         testBtn.setOnClickListener(v -> {
-            if (!PermissionHelper.isGranted(this, Manifest.permission.RECORD_AUDIO)) {
+            if (!PermissionHelper.isMicGranted(this)) {
                 permissionLauncher.launch(new String[]{Manifest.permission.RECORD_AUDIO});
                 return;
             }
@@ -840,7 +905,7 @@ public class OnboardingActivity extends AppCompatActivity {
 
         // Summary items — use real verification
         addSummaryItem(root, "Wake Word Trained", sampleCount >= REQUIRED_SAMPLES);
-        addSummaryItem(root, "Permissions", PermissionHelper.allGranted(this));
+        addSummaryItem(root, "Microphone", PermissionHelper.isMicGranted(this));
         addSummaryItem(root, "Speech Recognition", speechRecognizer.isAvailable());
         addSummaryItem(root, "Voice Settings", true); // Always at least default
         addSummaryItem(root, "Peek GUI", peekEnabled);

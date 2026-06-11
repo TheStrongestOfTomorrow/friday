@@ -172,7 +172,7 @@ public class AssistantActivity extends AppCompatActivity {
             } else {
                 permissionLauncher.launch(new String[]{Manifest.permission.RECORD_AUDIO});
             }
-        }, 500);
+        }, 800);
     }
 
     @Override

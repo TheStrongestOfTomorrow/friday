@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Button;
@@ -24,7 +26,6 @@ import com.friday.assistant.core.FridaySpeechRecognizer;
 import com.friday.assistant.core.PrefsManager;
 import com.friday.assistant.core.PermissionHelper;
 import com.friday.assistant.core.TTSManager;
-import com.friday.assistant.service.FridayForegroundService;
 import com.friday.assistant.service.PeekOverlayService;
 
 /**
@@ -32,6 +33,11 @@ import com.friday.assistant.service.PeekOverlayService;
  *
  * All settings are wired to real SharedPreferences.
  * All buttons perform real actions. No mocks.
+ *
+ * FIX v3.2.0:
+ *   - Test Voice button now waits for TTS to be ready (with retry)
+ *   - Shows proper feedback when TTS engine is still initializing
+ *   - Peek GUI toggle properly starts/stops overlay
  */
 public class SettingsActivity extends AppCompatActivity {
 
@@ -90,20 +96,17 @@ public class SettingsActivity extends AppCompatActivity {
                 prefs.setWakeWord(etWakeWord.getText().toString().trim());
             }
         });
-        // Also save on action done
         etWakeWord.setOnEditorActionListener((v, actionId, event) -> {
             prefs.setWakeWord(etWakeWord.getText().toString().trim());
             return false;
         });
 
-        // Wire up the Wake Word Enabled switch (was previously dead UI)
         Switch switchWakeWordEnabled = findViewById(R.id.switchWakeWordEnabled);
         switchWakeWordEnabled.setChecked(prefs.isWakeWordEnabled());
         switchWakeWordEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
             prefs.setWakeWordEnabled(isChecked);
 
-            // Update the foreground service monitoring state
-            Intent serviceIntent = new Intent(this, FridayForegroundService.class);
+            Intent serviceIntent = new Intent(this, com.friday.assistant.service.FridayForegroundService.class);
             if (isChecked) {
                 serviceIntent.setAction("START_MONITORING");
             } else {
@@ -158,12 +161,26 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        // FIX: Test Voice button now properly waits for TTS to initialize
         Button btnTestVoice = findViewById(R.id.btnTestVoice);
         btnTestVoice.setOnClickListener(v -> {
             btnTestVoice.setText("Speaking...");
+            btnTestVoice.setEnabled(false);
+
+            // The TTSManager now has a pending queue — if TTS isn't ready yet,
+            // speak() will queue the text and play it once initialization completes.
+            // But we should still give feedback about the state.
+            if (!ttsManager.isReady()) {
+                Toast.makeText(this, "TTS engine is starting up, please wait...", Toast.LENGTH_SHORT).show();
+            }
+
             ttsManager.speak("Hello! I am Friday, your personal assistant. How can I help you today?");
-            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(
-                    () -> btnTestVoice.setText("Play"), 4000);
+
+            // Reset button after a delay — use a longer delay to account for TTS init
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                btnTestVoice.setText("Play");
+                btnTestVoice.setEnabled(true);
+            }, 5000);
         });
 
         // ─── Display ───────────────────────────────────────────
@@ -172,16 +189,12 @@ public class SettingsActivity extends AppCompatActivity {
         switchPeekGui.setOnCheckedChangeListener((buttonView, isChecked) -> {
             prefs.setPeekGuiEnabled(isChecked);
 
-            // Actually start/stop the Peek overlay service
-            if (isChecked && !prefs.isStealthMode()) {
-                Intent intent = new Intent(this, PeekOverlayService.class);
-                intent.setAction("SHOW");
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(intent);
-                } else {
-                    startService(intent);
-                }
-            } else {
+            // FIX: Peek overlay is now controlled by the main activity/service
+            // It only appears during active listening, not permanently.
+            // Toggling this setting just changes the preference —
+            // the overlay will respect it next time Friday listens.
+            if (!isChecked) {
+                // If turning off, hide any current overlay
                 Intent intent = new Intent(this, PeekOverlayService.class);
                 intent.setAction("HIDE");
                 startService(intent);
@@ -193,19 +206,11 @@ public class SettingsActivity extends AppCompatActivity {
         switchStealthMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
             prefs.setStealthMode(isChecked);
 
-            // If stealth mode enabled, hide overlay
             if (isChecked) {
+                // Stealth mode — hide overlay
                 Intent intent = new Intent(this, PeekOverlayService.class);
                 intent.setAction("HIDE");
                 startService(intent);
-            } else if (prefs.isPeekGuiEnabled()) {
-                Intent intent = new Intent(this, PeekOverlayService.class);
-                intent.setAction("SHOW");
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(intent);
-                } else {
-                    startService(intent);
-                }
             }
         });
 
