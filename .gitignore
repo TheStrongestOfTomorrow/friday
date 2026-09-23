@@ -29,3 +29,10 @@ Thumbs.db
 # IDE
 .idea/
 *.iml
+build/
+.gradle/
+**/build/
+**/dist/
+**/node_modules/
+*.apk
+*.idsig

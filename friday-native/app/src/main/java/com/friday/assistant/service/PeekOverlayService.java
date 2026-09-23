@@ -19,22 +19,14 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import com.friday.assistant.MainActivity;
 import com.friday.assistant.R;
 
 /**
  * Friday — Peek Overlay Service
  *
- * Shows a floating overlay (Peek GUI) on top of other apps.
- * Requires SYSTEM_ALERT_WINDOW permission.
- *
- * FIX v3.2.0: The overlay is no longer auto-shown on startup.
- * It ONLY appears when Friday is actively listening or processing
- * a command, and auto-hides after inactivity.
- *
- * The old code auto-showed the overlay with a wave animation
- * whenever the service started, which was wrong — it should only
- * appear when the user activates Friday (by saying "Hey Friday"
- * or pressing the mic button).
+ * Floating overlay widget on Android that appears when active,
+ * with direct tap-to-open full screen transition.
  */
 public class PeekOverlayService extends Service {
 
@@ -50,14 +42,12 @@ public class PeekOverlayService extends Service {
     private final Handler autoHideHandler = new Handler(Looper.getMainLooper());
     private int animFrame = 0;
 
-    // Auto-hide after this many milliseconds of inactivity
-    private static final long AUTO_HIDE_DELAY_MS = 8000L;
+    private static final long AUTO_HIDE_DELAY_MS = 10000L;
 
     @Override
     public void onCreate() {
         super.onCreate();
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        // FIX: Do NOT auto-show overlay on service creation
     }
 
     @Override
@@ -76,7 +66,6 @@ public class PeekOverlayService extends Service {
                 if (isShowing) {
                     updateOverlay(text, state);
                 } else {
-                    // Not showing yet — show it with the update
                     showOverlay(text, state);
                 }
             }
@@ -87,7 +76,6 @@ public class PeekOverlayService extends Service {
     @SuppressLint("InflateParams")
     private void showOverlay(String text, String state) {
         if (isShowing && overlayView != null) {
-            // Already showing — just update
             updateOverlay(text, state);
             resetAutoHide();
             return;
@@ -95,7 +83,6 @@ public class PeekOverlayService extends Service {
 
         if (windowManager == null) return;
 
-        // Check overlay permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!android.provider.Settings.canDrawOverlays(this)) {
                 Log.w(TAG, "Overlay permission not granted");
@@ -108,7 +95,14 @@ public class PeekOverlayService extends Service {
         peekText = overlayView.findViewById(R.id.peekText);
         peekStatusDot = overlayView.findViewById(R.id.peekStatusDot);
 
-        // Set initial content
+        // Tap to transition from toast widget to full screen app
+        overlayView.setOnClickListener(v -> {
+            Intent appIntent = new Intent(this, MainActivity.class);
+            appIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(appIntent);
+            hideOverlay();
+        });
+
         if (text != null && peekText != null) {
             peekText.setText(text);
         }
@@ -134,14 +128,14 @@ public class PeekOverlayService extends Service {
                 PixelFormat.TRANSLUCENT);
 
         params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
-        params.y = 100;
+        params.y = 120;
 
         try {
             windowManager.addView(overlayView, params);
             isShowing = true;
             startWaveAnimation();
             resetAutoHide();
-            Log.d(TAG, "Peek overlay shown");
+            Log.d(TAG, "Peek overlay shown with click-to-fullscreen");
         } catch (Exception e) {
             Log.e(TAG, "Failed to show overlay", e);
         }
@@ -187,10 +181,6 @@ public class PeekOverlayService extends Service {
         }
     }
 
-    /**
-     * FIX: Auto-hide the overlay after inactivity.
-     * Prevents the overlay from staying visible forever.
-     */
     private void resetAutoHide() {
         autoHideHandler.removeCallbacksAndMessages(null);
         autoHideHandler.postDelayed(() -> {
@@ -200,7 +190,6 @@ public class PeekOverlayService extends Service {
     }
 
     private void startWaveAnimation() {
-        // Animate the waveform bars
         LinearLayout waveform = overlayView.findViewById(R.id.peekWaveform);
         if (waveform == null) return;
 

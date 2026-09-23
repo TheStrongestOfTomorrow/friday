@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.friday.assistant.app-mergeDebugResources-41:/values-large-v4/values-large-v4.xml",
+            "outputFile": "com.friday.assistant.app-mergeDebugResources-2:/values-large-v4/values-large-v4.xml",
             "map": [
                 {
-                    "source": "/home/z/.gradle/caches/8.14.3/transforms/2337ff1699ed8438700de3f7352ce6a8/transformed/material-1.12.0/res/values-large-v4/values-large-v4.xml",
+                    "source": "/home/jules/.gradle/caches/8.14.3/transforms/2337ff1699ed8438700de3f7352ce6a8/transformed/material-1.12.0/res/values-large-v4/values-large-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "/home/z/.gradle/caches/8.14.3/transforms/ff7b0efd9aea665782dc125f1366f30b/transformed/appcompat-1.7.0/res/values-large-v4/values-large-v4.xml",
+                    "source": "/home/jules/.gradle/caches/8.14.3/transforms/ff7b0efd9aea665782dc125f1366f30b/transformed/appcompat-1.7.0/res/values-large-v4/values-large-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10",
                         "startColumns": "4,4,4,4,4,4,4,4,4",
