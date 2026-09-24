@@ -29,14 +29,13 @@ runTest('System Info Retrieval', () => {
   assert(totalMem > 0);
 });
 
-// 2. Test Wake Word Matching Logic
+// 2. Test Wake Word String Matching & Fuzzy Confidence
 runTest('Wake Word String Matching & Fuzzy Confidence', () => {
   function matchWakeWord(input, target = 'hey friday', threshold = 0.7) {
     if (!input) return false;
     const clean = input.toLowerCase().trim();
     if (clean.includes(target)) return true;
 
-    // Levenshtein similarity
     let a = clean, b = target;
     if (a === b) return true;
     let dp = Array(a.length + 1).fill(null).map(() => Array(b.length + 1).fill(0));
@@ -54,14 +53,14 @@ runTest('Wake Word String Matching & Fuzzy Confidence', () => {
 
   assert.strictEqual(matchWakeWord('hey friday'), true);
   assert.strictEqual(matchWakeWord('hey friday open chrome'), true);
-  assert.strictEqual(matchWakeWord('hay friday'), true); // Fuzzy match
+  assert.strictEqual(matchWakeWord('hay friday'), true);
   assert.strictEqual(matchWakeWord('random conversation'), false);
 });
 
 // 3. Test Custom TFLite File Validation
 runTest('Custom TFLite Model File Validation', () => {
   const dummyTflitePath = path.join(__dirname, 'mock_model.tflite');
-  fs.writeFileSync(dummyTflitePath, Buffer.from([0x1c, 0x00, 0x00, 0x00, 0x54, 0x46, 0x4c, 0x33])); // TFL3 header
+  fs.writeFileSync(dummyTflitePath, Buffer.from([0x1c, 0x00, 0x00, 0x00, 0x54, 0x46, 0x4c, 0x33]));
   assert(fs.existsSync(dummyTflitePath));
   const buf = fs.readFileSync(dummyTflitePath);
   assert.strictEqual(buf.toString('ascii', 4, 8), 'TFL3');

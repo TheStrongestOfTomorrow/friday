@@ -18,7 +18,6 @@ public class PrefsManager {
     public static final String KEY_WAKE_WORD = "wake_word";
     public static final String KEY_WAKE_WORD_ENABLED = "wake_word_enabled";
     public static final String KEY_CONFIDENCE_THRESHOLD = "confidence_threshold";
-    public static final String KEY_CUSTOM_TFLITE_PATH = "custom_tflite_path";
     public static final String KEY_TTS_RATE = "tts_rate";
     public static final String KEY_TTS_PITCH = "tts_pitch";
     public static final String KEY_PEEK_GUI_ENABLED = "peek_gui_enabled";
@@ -80,14 +79,6 @@ public class PrefsManager {
 
     public void setConfidenceThreshold(float threshold) {
         prefs.edit().putFloat(KEY_CONFIDENCE_THRESHOLD, threshold).apply();
-    }
-
-    public String getCustomTflitePath() {
-        return prefs.getString(KEY_CUSTOM_TFLITE_PATH, "");
-    }
-
-    public void setCustomTflitePath(String path) {
-        prefs.edit().putString(KEY_CUSTOM_TFLITE_PATH, path).apply();
     }
 
     public int getWakeWordSamples() {
@@ -182,6 +173,7 @@ public class PrefsManager {
 
     public void resetAll() {
         prefs.edit().clear().apply();
+        // Restore first launch so onboarding runs
         setFirstLaunch(true);
     }
 }

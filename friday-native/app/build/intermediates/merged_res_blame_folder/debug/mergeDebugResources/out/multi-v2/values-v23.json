@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.friday.assistant.app-mergeDebugResources-2:/values-v23/values-v23.xml",
+            "outputFile": "com.friday.assistant.app-mergeDebugResources-41:/values-v23/values-v23.xml",
             "map": [
                 {
-                    "source": "/home/jules/.gradle/caches/8.14.3/transforms/685077734e408c2b4d019f76f3a89a00/transformed/cardview-1.0.0/res/values-v23/values-v23.xml",
+                    "source": "/home/z/.gradle/caches/8.14.3/transforms/685077734e408c2b4d019f76f3a89a00/transformed/cardview-1.0.0/res/values-v23/values-v23.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "/home/jules/.gradle/caches/8.14.3/transforms/2337ff1699ed8438700de3f7352ce6a8/transformed/material-1.12.0/res/values-v23/values-v23.xml",
+                    "source": "/home/z/.gradle/caches/8.14.3/transforms/2337ff1699ed8438700de3f7352ce6a8/transformed/material-1.12.0/res/values-v23/values-v23.xml",
                     "from": {
                         "startLines": "2,5,9,13,16,19,22,25,28,32",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4",
@@ -42,7 +42,7 @@
                     }
                 },
                 {
-                    "source": "/home/jules/.gradle/caches/8.14.3/transforms/ff7b0efd9aea665782dc125f1366f30b/transformed/appcompat-1.7.0/res/values-v23/values-v23.xml",
+                    "source": "/home/z/.gradle/caches/8.14.3/transforms/ff7b0efd9aea665782dc125f1366f30b/transformed/appcompat-1.7.0/res/values-v23/values-v23.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,20,34,35,36,39,43,44,45,46",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",

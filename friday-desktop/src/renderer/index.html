@@ -2,174 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Friday Voice Assistant</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="app-container" id="appContainer">
-    <!-- Title Bar -->
     <header class="titlebar">
-      <div class="titlebar-drag">
-        <span class="app-logo">⚡ FRIDAY DESKTOP</span>
-        <span class="status-badge" id="statusBadge"><span class="dot"></span> READY</span>
-      </div>
-      <div class="titlebar-controls">
-        <button id="btnToastToggle" class="icon-btn" title="Toggle Toast Mini Mode">📌 Mini</button>
-        <button id="btnMinimize" class="icon-btn" title="Minimize">—</button>
-        <button id="btnMaximize" class="icon-btn" title="Maximize">▢</button>
-        <button id="btnClose" class="icon-btn close-btn" title="Close">✕</button>
-      </div>
+      <span class="app-logo">⚡ FRIDAY DESKTOP</span>
     </header>
-
-    <!-- Main Content Grid -->
-    <div class="main-layout">
-      <!-- Sidebar Navigation -->
-      <nav class="sidebar">
-        <button class="nav-item active" data-tab="tabVoice">
-          <span class="icon">🎙️</span>
-          <span class="label">Assistant</span>
-        </button>
-        <button class="nav-item" data-tab="tabDesktopTools">
-          <span class="icon">💻</span>
-          <span class="label">Desktop Tools</span>
-        </button>
-        <button class="nav-item" data-tab="tabWakeWord">
-          <span class="icon">🤖</span>
-          <span class="label">Wake Word & Model</span>
-        </button>
-        <button class="nav-item" data-tab="tabSettings">
-          <span class="icon">⚙️</span>
-          <span class="label">Settings</span>
-        </button>
-      </nav>
-
-      <!-- View Panels -->
-      <main class="content-panel">
-        <!-- Voice Assistant Tab -->
-        <section id="tabVoice" class="tab-content active">
-          <div class="hero-card">
-            <div class="waveform-container">
-              <canvas id="waveformCanvas" width="500" height="80"></canvas>
-            </div>
-            <div class="assistant-status">
-              <h2 id="assistantPrompt">"Say 'Hey Friday' or click below to speak"</h2>
-              <p id="assistantSubtext">Desktop Voice Recognition Active</p>
-            </div>
-            <div class="controls-row">
-              <button id="btnMicListen" class="mic-button pulse">
-                <span class="mic-icon">🎙️</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="response-card">
-            <h3>Response Log</h3>
-            <div id="responseLog" class="log-box">
-              <div class="log-entry system">[Friday] Ready. Say "Hey Friday" or enter command below.</div>
-            </div>
-            <div class="input-group">
-              <input type="text" id="textCommandInput" placeholder="Type a command (e.g. open chrome, volume 50, date)..." />
-              <button id="btnSendCmd" class="primary-btn">Send</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- Desktop Tools Tab (Unique Desktop Features) -->
-        <section id="tabDesktopTools" class="tab-content">
-          <h2>💻 Desktop System Integration</h2>
-          <p class="section-desc">Unique desktop capabilities for Linux, Windows, and macOS.</p>
-
-          <div class="grid-cards">
-            <div class="tool-card">
-              <h3>🚀 Quick Launch Applications</h3>
-              <div class="button-grid">
-                <button class="tool-btn" data-app="terminal">Terminal / Shell</button>
-                <button class="tool-btn" data-app="chrome">Google Chrome</button>
-                <button class="tool-btn" data-app="code">VS Code</button>
-                <button class="tool-btn" data-app="files">File Manager</button>
-              </div>
-            </div>
-
-            <div class="tool-card">
-              <h3>🔊 System Control</h3>
-              <div class="action-row">
-                <label>Set Volume (%):</label>
-                <input type="range" id="volumeSlider" min="0" max="100" value="70">
-                <span id="volumeVal">70%</span>
-              </div>
-            </div>
-
-            <div class="tool-card full-width">
-              <h3>⚡ Execute Custom Terminal Command</h3>
-              <div class="input-group">
-                <input type="text" id="sysCmdInput" placeholder="Enter shell command (e.g., uptime, free -m, ip a)..." />
-                <button id="btnRunSysCmd" class="primary-btn">Run Command</button>
-              </div>
-              <pre id="sysCmdOutput" class="terminal-output">Command output will appear here...</pre>
-            </div>
-          </div>
-        </section>
-
-        <!-- Wake Word & Custom TFLite Tab -->
-        <section id="tabWakeWord" class="tab-content">
-          <h2>🤖 "Hey Friday" Engine & Custom TFLite</h2>
-          <p class="section-desc">Manage voice wake detection and upload custom trained TFLite audio models.</p>
-
-          <div class="tool-card">
-            <div class="setting-toggle-row">
-              <div>
-                <h3>Enable "Hey Friday" Voice Activation</h3>
-                <p class="hint">Continuous background mic listening for keyword trigger.</p>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="chkWakeWord" checked>
-                <span class="slider round"></span>
-              </label>
-            </div>
-
-            <div class="form-group margin-top">
-              <label>Sensitivity Threshold:</label>
-              <input type="range" id="sensitivityRange" min="0.1" max="1.0" step="0.05" value="0.7">
-              <span id="sensitivityVal">0.70</span>
-            </div>
-          </div>
-
-          <div class="tool-card margin-top">
-            <h3>📁 Custom TFLite Model Upload</h3>
-            <p class="hint">Upload your own .tflite custom wake word model file to replace or enhance default engine.</p>
-            <div class="file-upload-box">
-              <input type="file" id="tfliteFileInput" accept=".tflite" style="display:none;" />
-              <button id="btnChooseTflite" class="secondary-btn">Choose .tflite File</button>
-              <span id="tfliteFileName">No custom file loaded (Using default "Hey Friday" model)</span>
-            </div>
-            <button id="btnUploadTflite" class="primary-btn margin-top" disabled>Apply Custom Model</button>
-          </div>
-        </section>
-
-        <!-- Settings Tab -->
-        <section id="tabSettings" class="tab-content">
-          <h2>⚙️ Desktop Assistant Settings</h2>
-
-          <div class="tool-card">
-            <h3>System Info</h3>
-            <div id="systemInfoBox" class="info-list">
-              <p>Loading system details...</p>
-            </div>
-          </div>
-
-          <div class="tool-card margin-top">
-            <h3>Global Hotkey</h3>
-            <div class="form-group">
-              <label>Shortcut to toggle Friday:</label>
-              <input type="text" id="hotkeyInput" value="CommandOrControl+Shift+F" readonly />
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
+    <main class="content-panel">
+      <h2>Desktop Voice Assistant</h2>
+    </main>
   </div>
-
-  <script src="renderer.js"></script>
 </body>
 </html>
