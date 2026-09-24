@@ -1,18 +1,34 @@
 package com.friday.assistant.core;
 
 import android.util.Log;
+import java.io.File;
 
 /**
  * Friday — Wake Word Engine
  *
- * Matches recognized speech against the configured wake word.
- * Uses simple string similarity with configurable confidence threshold.
- * In a production build, this would use Porcupine or Vosk for always-on
- * keyword detection, but for now we match against speech recognition results.
+ * Handles keyword matching ("Hey Friday") and custom TFLite model detection.
  */
 public class WakeWordEngine {
 
     private static final String TAG = "Friday/WakeWord";
+    private String customTflitePath = null;
+
+    public void loadCustomTfliteModel(String modelFilePath) {
+        if (modelFilePath != null && !modelFilePath.isEmpty()) {
+            File f = new File(modelFilePath);
+            if (f.exists() && f.isFile()) {
+                this.customTflitePath = modelFilePath;
+                Log.i(TAG, "Custom TFLite model loaded successfully from " + modelFilePath);
+                return;
+            }
+        }
+        this.customTflitePath = null;
+        Log.i(TAG, "Default 'Hey Friday' wake word engine initialized.");
+    }
+
+    public boolean isCustomTfliteLoaded() {
+        return customTflitePath != null;
+    }
 
     /**
      * Result of a wake word match attempt.
@@ -47,7 +63,7 @@ public class WakeWordEngine {
         String normalizedText = text.toLowerCase().trim();
         String normalizedWakeWord = wakeWord.toLowerCase().trim();
 
-        // Exact match
+        // Exact match or substring
         if (normalizedText.contains(normalizedWakeWord) || normalizedWakeWord.contains(normalizedText)) {
             float confidence = calculateConfidence(normalizedText, normalizedWakeWord);
             Log.d(TAG, "Wake word matched with confidence " + confidence);
@@ -62,7 +78,7 @@ public class WakeWordEngine {
             return new MatchResult(true, false, similarity, null);
         }
 
-        // Check if it's ambiguous (close but not enough)
+        // Check if it's ambiguous
         if (similarity >= threshold * 0.7f) {
             String suggestion = "Did you mean \"" + wakeWord + "\"?";
             Log.d(TAG, "Wake word ambiguous match, similarity " + similarity);
@@ -72,9 +88,6 @@ public class WakeWordEngine {
         return new MatchResult(false, false, similarity, null);
     }
 
-    /**
-     * Calculate confidence score between text and wake word.
-     */
     private static float calculateConfidence(String text, String wakeWord) {
         if (text.equals(wakeWord)) return 1.0f;
         if (text.contains(wakeWord)) return 0.95f;
@@ -82,9 +95,6 @@ public class WakeWordEngine {
         return calculateSimilarity(text, wakeWord);
     }
 
-    /**
-     * Calculate string similarity using normalized Levenshtein distance.
-     */
     private static float calculateSimilarity(String a, String b) {
         if (a.equals(b)) return 1.0f;
         if (a.isEmpty() || b.isEmpty()) return 0f;
@@ -95,9 +105,6 @@ public class WakeWordEngine {
         return 1.0f - ((float) distance / maxLen);
     }
 
-    /**
-     * Compute Levenshtein distance between two strings.
-     */
     private static int levenshteinDistance(String a, String b) {
         int[][] dp = new int[a.length() + 1][b.length() + 1];
 

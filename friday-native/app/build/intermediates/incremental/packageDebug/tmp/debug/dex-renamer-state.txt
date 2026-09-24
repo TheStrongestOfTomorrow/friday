@@ -1,11 +1,11 @@
-#Thu Jun 11 16:09:49 UTC 2026
-base.0=/home/z/my-project/friday-native/app/build/intermediates/dex/debug/mergeExtDexDebug/classes.dex
-base.1=/home/z/my-project/friday-native/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
-base.2=/home/z/my-project/friday-native/app/build/intermediates/dex/debug/mergeProjectDexDebug/1/classes.dex
-base.3=/home/z/my-project/friday-native/app/build/intermediates/dex/debug/mergeProjectDexDebug/13/classes.dex
-base.4=/home/z/my-project/friday-native/app/build/intermediates/dex/debug/mergeProjectDexDebug/2/classes.dex
-base.5=/home/z/my-project/friday-native/app/build/intermediates/dex/debug/mergeProjectDexDebug/9/classes.dex
-base.6=/home/z/my-project/friday-native/app/build/intermediates/dex/debug/mergeExtDexDebug/classes2.dex
+#Wed Sep 23 18:13:08 UTC 2026
+base.0=/app/friday-native/app/build/intermediates/dex/debug/mergeExtDexDebug/classes.dex
+base.1=/app/friday-native/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
+base.2=/app/friday-native/app/build/intermediates/dex/debug/mergeProjectDexDebug/1/classes.dex
+base.3=/app/friday-native/app/build/intermediates/dex/debug/mergeProjectDexDebug/13/classes.dex
+base.4=/app/friday-native/app/build/intermediates/dex/debug/mergeProjectDexDebug/2/classes.dex
+base.5=/app/friday-native/app/build/intermediates/dex/debug/mergeProjectDexDebug/9/classes.dex
+base.6=/app/friday-native/app/build/intermediates/dex/debug/mergeExtDexDebug/classes2.dex
 path.0=classes.dex
 path.1=0/classes.dex
 path.2=1/classes.dex
